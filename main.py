@@ -18,7 +18,7 @@ sent = list(doc.sents)[0]
 import pandas as pd
 from pprint import pprint as pprint
 import numpy as np
-from sklearn.cluster import AffinityPropagation, KMeans
+from sklearn.cluster import AffinityPropagation, KMeansp
 import distance
 sentences = pd.read_csv("sentences.csv")
 sentences = sentences.to_numpy().squeeze()
