@@ -14,6 +14,12 @@
   * *removed* has the filtered answers
   * *phrases* has the collection of constituency structures (NP, VP, SVAR, etc)
     * the dataframe does not serialize parse trees so the structure is lost
+* Added question answering from huggting face
+* Added relation, span, and template enum types
+* Recursively builds a tree where the edges are the relations and nodes are the spans
+* Classfies spans and relations naively 
+* Handles IF THEN ELSE sentences
+
 
 ## TODO
 * Filter based on constituency tree structure (answers should be child nodes of a question)
@@ -21,4 +27,12 @@
   * Use dependency parse to filter further?
   * Use dependency parse to extract annotation structure from (Q, A)
 * Generate questions on the selected answer to confirm spans in the question?
-* Use constants (regex), variables (already extracted), and keywords(returned, return)
+* Use constants (regex), variables (already extracted), and keywords(returned, return
+* 
+
+
+
+## Problems
+* How to pick template?
+* How to label spans?
+* How to label relations?

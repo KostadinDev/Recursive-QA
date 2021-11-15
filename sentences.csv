@@ -4,7 +4,7 @@
 "The client has the choice of three creation methods: UNCHECKED4, GUARDED4, or EXCLUSIVE4"
 "If the current filehandle is a named attribute directory, OPEN will then create or open a named attribute file."
 "For this type of create, createattrs specifies the initial set of attributes for the file."
-The set of attributes may include any writable attribute valid for regular files.
+"The set of attributes may include any writable attribute valid for regular files."
 "When an UNCHECKED create encounters an existing file, the attributes specified by createattrs are not used, except that when a size of zero is specified, the existing file is truncated"
 "If GUARDED4 is specified, the server checks for the presence of a duplicate object by name before perfoming the create."
 "If a duplicate exists, an error of NFS4ERR_EXIST is returned as the status."
@@ -13,7 +13,7 @@ The set of attributes may include any writable attribute valid for regular files
 "If the stored verifier does not match, then an error of NFS4ERR_EXIST is returned."
 "For the target directory, the server returns change_info4 information in cinfo."
 "NFS4ERR_INVAL is returned if the reclaim is done at an inappropriate time, e.g., after DELEGPURGE has been done."
-NFS4ERR_BAD_RECLAIM is returned if the other error conditions do not apply and the server has no record of the delegation whose reclaim is being attempted.
+"NFS4ERR_BAD_RECLAIM is returned if the other error conditions do not apply and the server has no record of the delegation whose reclaim is being attempted."
 "If the underlying file system at the server is only accessible in a read-only mode and the OPEN request has specified OPEN4_SHARE_ACCESS_WRITE or OPEN4_SHARE_ACCESS_BOTH, the server will return NFS4ERR_ROFS to indicate a read-only file system,"
 "If the object does not exist, the server creates the object and stores the verifier in a stable storage."
 "If the stored verifier does not match, then an error of NFS4ERR_EXIST is returned."
