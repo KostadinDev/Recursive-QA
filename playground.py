@@ -21,3 +21,5 @@ print(f"sentence: {sentence}")
 print(build_tree(tree))
 print()
 print(f"Relation codes: {list(Relation)}")
+
+Parser.visualize(tree)

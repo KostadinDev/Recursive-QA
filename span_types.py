@@ -1,11 +1,10 @@
 from enum import Enum, unique
 
+
 @unique
 class Span(Enum):
-    if_else = 0
-    var_val = 1
-    Pred_Name = 3
-    Const = 4
-    Def_Fun_name = 5
-
-
+    if_else = "if"
+    var_val = "var"
+    Pred_Name = "predicate"
+    Const = "const"
+    Def_Fun_name = "func"

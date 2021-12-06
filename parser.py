@@ -3,16 +3,53 @@ from transformers import pipeline
 from relation_types import Relation
 from span_types import Span
 import numpy as np
+import uuid
+
 benepar.download('benepar_en3')
 from templates import Template
 from sklearn.cluster import AffinityPropagation, KMeans
 import distance
+import spacy
+from spacy import displacy
+import graphviz
 
 nlp = spacy.load('en_core_web_sm')
 nlp.add_pipe('benepar', config={'model': 'benepar_en3'})
 
 
 class Parser:
+
+    @staticmethod
+    def build_dot(tree, dot):
+
+        question, answer, relation = tree[0], tree[1], tree[2]
+
+        if type(question) == dict:
+            qid = str(uuid.uuid4())
+            value = list(question.keys())[0] + ': ' + str(list(question.values())[0].value)
+            dot.node(qid, value)
+        else:
+            qid, dot = Parser.build_dot(question, dot)
+
+        if type(answer) == dict:
+            aid = str(uuid.uuid4())
+            value = list(answer.keys())[0] + ': ' + str(list(answer.values())[0].value)
+            dot.node(aid, value)
+        else:
+            aid, dot = Parser.build_dot(answer, dot)
+
+        dot.edge(qid, aid, str(relation.value))
+        return qid, dot
+
+    @staticmethod
+    def visualize(tree):
+        dot = graphviz.Graph()
+        with dot.subgraph() as s:
+            # s.attr(rank='same')
+            _, s = Parser.build_dot(tree, s)
+        dot.view()
+
+        return dot
 
     @staticmethod
     def filter_edit_distance(words):
@@ -84,9 +121,11 @@ class Parser:
                     if 'VP' in phrases.keys():
                         for vp in phrases['VP']:
                             answers.append(f'{np} {vp}')
-        print("answers: ", answers, phrases)
-        answers = Parser.filter_edit_distance(Parser.filter_not_in_question(answers, question)) # TODO make sure filtering doesnt hurt more than helps
-        if len(answers) < 5 and answers: # TODO CHANGE RANDOM MAGIC NUMBER
+        print("answers before filter: ", answers)
+        answers = Parser.filter_edit_distance(
+            Parser.filter_not_in_question(answers, question))  # TODO make sure filtering doesnt hurt more than helps
+        print("answers after filter: ", answers)
+        if len(answers) < 5 and answers:  # TODO CHANGE RANDOM MAGIC NUMBER
             if template == Template.IF:
                 index = 0
             else:
@@ -140,20 +179,21 @@ class Parser:
             spans.extend(new_spans)
             new_spans, answer_span = Parser.get_spans(answer, original_sentence, Template.THEN, show_prints)
             spans.extend(new_spans)
-            relation = Relation.Argument
+            relation = Relation.then
         elif template == Template.IF:
             # if 'SBAR' in phrases.keys():
             #     return Parser.get_spans(question_raw, original_sentence, Template.IF_THEN, show_prints)
             if 'S' in phrases.keys():
-                new_spans, (question_span,answer_span, relation) = Parser.get_spans(str(phrases['S'][0]), original_sentence, template, show_prints)
+                new_spans, (question_span, answer_span, relation) = Parser.get_spans(str(phrases['S'][0]),
+                                                                                     original_sentence, template,
+                                                                                     show_prints)
                 spans.extend(new_spans)
             else:
                 question_span = {question_raw: Span.Pred_Name}
                 answer_span = {answer: Span.var_val}
                 spans.append(question_span)
-                spans.append(answer)
+                spans.append(answer_span)
                 relation = Relation.Argument
-
 
             if 'if' in sentence.lower():
                 answer_span = (question_span, answer_span, relation)
@@ -163,8 +203,7 @@ class Parser:
         elif template == Template.THEN:
             question_span = {question_raw: Span.Def_Fun_name}
             answer_span = {answer: Span.Const}
-            spans.append(question_raw)
-            spans.append(answer)
+            spans.append(question_span)
+            spans.append(answer_span)
             relation = Relation.Return_val
-
         return spans, (question_span, answer_span, relation)

@@ -36,3 +36,4 @@
 * How to pick template?
 * How to label spans?
 * How to label relations?
+* How many splits?

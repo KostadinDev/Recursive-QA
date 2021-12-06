@@ -1,0 +1,17 @@
+graph {
+	{
+		"e7da55e4-54b2-4a70-8be2-5725c6b4ca02" [label="if: if"]
+		"9aeac238-d425-4685-9ad7-fc8c7b236857" [label="is a directory: predicate"]
+		"c197caf3-444f-4b3e-9ba9-e28877981fb6" [label="it: var"]
+		"9aeac238-d425-4685-9ad7-fc8c7b236857" -- "c197caf3-444f-4b3e-9ba9-e28877981fb6" [label="(arg)"]
+		"e7da55e4-54b2-4a70-8be2-5725c6b4ca02" -- "9aeac238-d425-4685-9ad7-fc8c7b236857" [label="(condition)"]
+		"5e537a83-4e37-464c-a151-c2f830c67f23" [label="is returned: func"]
+		"15f1e8a4-62eb-450b-a968-9cd04c6204b6" [label="NFS4ERR_ISDIR: const"]
+		"5e537a83-4e37-464c-a151-c2f830c67f23" -- "15f1e8a4-62eb-450b-a968-9cd04c6204b6" [label="(value)"]
+		"e7da55e4-54b2-4a70-8be2-5725c6b4ca02" -- "5e537a83-4e37-464c-a151-c2f830c67f23" [label="(then)"]
+		"8bf3ec79-a087-4300-8ed9-e9fdc74d07d8" [label="is returned: func"]
+		"0ce04740-a5a5-4d07-bc5a-0d06ba55e2e4" [label="NFS4ERR_SYMLINK: const"]
+		"8bf3ec79-a087-4300-8ed9-e9fdc74d07d8" -- "0ce04740-a5a5-4d07-bc5a-0d06ba55e2e4" [label="(value)"]
+		"e7da55e4-54b2-4a70-8be2-5725c6b4ca02" -- "8bf3ec79-a087-4300-8ed9-e9fdc74d07d8" [label="(else)"]
+	}
+}
