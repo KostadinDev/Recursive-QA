@@ -26,15 +26,37 @@ def clearConsole():
 
 
 class RQAParser:
+
+    @staticmethod
+    def get_answers(question, segment, template):
+        answers = []
+        phrases = RQAParser.get_phrases(segment)
+        if template == 1 or template == 2:
+            if 'NP' in phrases.keys():
+                for np in phrases['NP']:
+                    answers.append(f'{np}')
+        elif template == 0:
+            if 'NP' in phrases.keys():
+                for np in phrases['NP']:
+                    if 'VP' in phrases.keys():
+                        for vp in phrases['VP']:
+                            answers.append(f'{np} {vp}')
+        print("answers before filter: ", answers)
+        answers = RQAParser.filter_edit_distance(
+            RQAParser.filter_not_in_question(answers, question))  # TODO make sure filtering doesnt hurt more than helps
+        return {'answers': answers}
+
     @staticmethod
     def get_questions(segment):
-        print(segment, ' here')
         phrases = RQAParser.get_phrases(segment)
-        print(phrases, ' phrases')
-        return phrases
+        if 'SBAR' in phrases.keys():
+            return {'question': list(map(str, phrases["SBAR"]))}
+        elif 'VP' in phrases.keys():
+            return {'question': list(map(str, phrases["VP"]))}
 
     @staticmethod
     def get_segments(sentence, template=0):
+        print(sentence, template)
         segments = []
         if template == 0:  # Unknown template
             phrases = RQAParser.get_phrases(sentence, recursive=False)
