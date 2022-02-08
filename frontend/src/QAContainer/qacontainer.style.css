@@ -1,0 +1,33 @@
+
+.qacontainer {
+    display:flex;
+    flex-direction: row;
+    align-items:flex-start;
+    height:350px
+}
+
+.qacomponent{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    width:550px;
+    padding-left:25px;
+    padding-right:25px;
+}
+.next-button{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom:10px;
+}
+.qabutton{
+    padding:5px;
+}
+.add-button{
+    margin-top:5px;
+}
+
+.qasentence{
+    padding-left: 25px;
+    padding-right: 25px;
+}
