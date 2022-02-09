@@ -123,10 +123,10 @@ function QAContainer() {
             </div>
             <div className='qacontainer'>
                 {/*<Sentences sentence={sentence} segments={segments}/>*/}
-                <QAItems items={questions} selectedItem={selectedQuestion}
-                           handleSelect={handleSelectQuestion} type={"question"}/>
-                <QAItems items={answers} selectedItem={selectedAnswer}
-                         handleSelect={handleSelectAnswer} type={"answer"}/>
+                <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}
+                           handleSelect={handleSelectQuestion} type={"Questions"}/>
+                <QAItems items={answers} setItems={setAnswers} selectedItem={selectedAnswer}
+                         handleSelect={handleSelectAnswer} type={"Answers"}/>
             </div>
             <div className='next-button'>
                 <NextButton/>

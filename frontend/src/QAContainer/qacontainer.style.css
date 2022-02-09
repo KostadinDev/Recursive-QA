@@ -48,12 +48,21 @@
     border-radius: 5px;
 }
 
-.qa-button{
-    color:white;
+.qa-button {
+    color: white;
     font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 
 }
 
-.selected-qa-button{
-    background-color:orange;
+.selected-qa-button {
+    background-color: orange;
+}
+
+.text-input {
+    display:flex;
+    flex-direction: row;
+    padding-left: 25px;
+    margin-left: 5px;
+    padding-right: 25px;
+    margin-right:5px;
 }
