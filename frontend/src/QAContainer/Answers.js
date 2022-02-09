@@ -7,7 +7,7 @@ export default function Answers(props) {
     const answers = props.answers;
     const selectedAnswer = props.selectedAnswer;
     const handleSelectAnswer = props.handleSelectAnswer
-    return <div className='qacomponent'><h2>Answers</h2>
+    return <div className='qacomponent'><h3>Answers</h3>
         {answers ? answers.map(function (answer) {
             return <QAButton key={answer} text={answer} selected={selectedAnswer}
                              handleSelect={handleSelectAnswer}/>

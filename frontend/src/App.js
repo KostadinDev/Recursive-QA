@@ -11,7 +11,7 @@ function App() {
         <div className="App">
             <Navigation></Navigation>
             <QAContainer></QAContainer>
-            <History></History>
+            {/*<History></History>*/}
         </div>
     );
 }

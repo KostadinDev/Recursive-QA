@@ -1,7 +1,5 @@
 import React, {useState, useEffect, useReducer} from 'react';
-import Sentences from "./Sentences";
-import Questions from "./Questions";
-import Answers from "./Answers";
+import QAItems from "./QAItems";
 import QACard from "./QACard";
 import './qacontainer.style.css';
 import NextButton from "./NextButton";
@@ -20,6 +18,7 @@ function QAContainer() {
     const [annotation, setAnnotation] = useState([]);
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
+    const currentSegment = segments !== undefined && segments.length > 0 ? segments[0]['segment'] : "";
     const api = "http://localhost:5050";
 
     const mount = async () => {
@@ -112,17 +111,22 @@ function QAContainer() {
         setAnnotation(annotation.concat([[question, answer, relation]]));
     }
 
-    return (<div>
+    return (<div className="outside-qacontainer">
             <div className='qasentence'>
-                <h2>Original Sentence</h2>
-                <QACard text={sentence}/>
+                <h3>Sentence</h3>
+                <QACard sentence={sentence} segment={currentSegment}/>
+                <br/>
+                {/*<h3>Current Segment</h3>*/}
+                {/*<QACard text={currentSegment}/>*/}
+                {/*<br/>*/}
+
             </div>
             <div className='qacontainer'>
-                <Sentences sentence={sentence} segments={segments}/>
-                <Questions questions={questions} selectedQuestion={selectedQuestion}
-                           handleSelectQuestion={handleSelectQuestion}/>
-                <Answers answers={answers} selectedAnswer={selectedAnswer}
-                         handleSelectAnswer={handleSelectAnswer}/>
+                {/*<Sentences sentence={sentence} segments={segments}/>*/}
+                <QAItems items={questions} selectedItem={selectedQuestion}
+                           handleSelect={handleSelectQuestion} type={"question"}/>
+                <QAItems items={answers} selectedItem={selectedAnswer}
+                         handleSelect={handleSelectAnswer} type={"answer"}/>
             </div>
             <div className='next-button'>
                 <NextButton/>
