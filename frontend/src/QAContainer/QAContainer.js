@@ -7,6 +7,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import Instructions from "./Instructions";
 
 function QAContainer() {
     const [sentence, setSentence] = useState("");
@@ -113,24 +114,22 @@ function QAContainer() {
 
     return (<div className="outside-qacontainer">
             <div className='qasentence'>
-                <h3>Sentence</h3>
                 <QACard sentence={sentence} segment={currentSegment}/>
-                <br/>
-                {/*<h3>Current Segment</h3>*/}
-                {/*<QACard text={currentSegment}/>*/}
-                {/*<br/>*/}
-
             </div>
+            <hr/>
             <div className='qacontainer'>
                 {/*<Sentences sentence={sentence} segments={segments}/>*/}
+                <Instructions type='questions'/>
                 <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}
                            handleSelect={handleSelectQuestion} type={"Questions"}/>
                 <QAItems items={answers} setItems={setAnswers} selectedItem={selectedAnswer}
                          handleSelect={handleSelectAnswer} type={"Answers"}/>
+                <Instructions type='answers'/>
             </div>
             <div className='next-button'>
                 <NextButton/>
             </div>
+            <hr/>
         </div>
     );
 }

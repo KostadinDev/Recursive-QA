@@ -20,40 +20,20 @@ const elevation = 6;
 export default function QACard(props) {
     const sentence = props.sentence;
     const segment = props.segment
-    return <div className='qabutton'>
-        {/*<div className="d-grid gap-4">*/}
-        {/*    <ThemeProvider theme={darkTheme}>*/}
-        {/*        <Item key={elevation} elevation={elevation}>*/}
-        {/*            <Highlighter*/}
-        {/*                highlightClassName="QACard"*/}
-        {/*                searchWords={[segment]}*/}
-        {/*                autoEscape={true}*/}
-        {/*                textToHighlight={sentence}/>*/}
-        {/*        </Item>*/}
-        {/*    </ThemeProvider>*/}
-        {/*</div>*/}
-        <Box
-            sx={{
-                p:4,
-                width: '100%',
-                border: '1px solid grey', borderRadius: '5px', borderColor:'#5090D3'
-            }}
-        > <Highlighter
+    return <div className='qabutton top-sentence'>
+        {/*<Box*/}
+        {/*    sx={{*/}
+        {/*        p:4,*/}
+        {/*        width: '100%',*/}
+        {/*        border: '1px solid grey', borderRadius: '5px', borderColor:'#5090D3'*/}
+        {/*    }}>*/}
+        <br/>
+            <Highlighter
             highlightClassName="highlight"
             searchWords={[segment]}
             autoEscape={true}
             textToHighlight={sentence}/>
-        </Box>
-        {/*<div className="d-grid gap-4">*/}
-        {/*    <ThemeProvider theme={darkTheme}>*/}
-        {/*        <Item key={elevation} elevation={elevation}>*/}
-        {/*            <Highlighter*/}
-        {/*                highlightClassName="QACard"*/}
-        {/*                searchWords={[segment]}*/}
-        {/*                autoEscape={true}*/}
-        {/*                textToHighlight={sentence}/>*/}
-        {/*        </Item>*/}
-        {/*    </ThemeProvider>*/}
-        {/*</div>*/}
+        <br/>
+        {/*</Box>*/}
     </div>;
 }

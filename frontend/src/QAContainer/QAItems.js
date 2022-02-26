@@ -36,7 +36,7 @@ export default function QAItems(props) {
     const classes = textInputStyle();
 
     function formatText(text) {
-        return text && type === 'Questions' ? <>What &nbsp;<i>{text.toLowerCase()}</i>?</> : <>{text.toLowerCase()}</>;
+        return text && type === 'Questions' ? <>What &nbsp;<i>{text.toLowerCase()}</i>?</> : <>{text}</>;
     }
 
 
@@ -55,7 +55,10 @@ export default function QAItems(props) {
         setAddNewItem(false);
         return false;
     }
-
+    const deleteAddItem = () => {
+        setNewItem("");
+        setAddNewItem(false);
+    }
     const QAButton = styled(Button)(({theme}) => ({
         width: "100%",
         textTransform: 'none',
@@ -74,7 +77,7 @@ export default function QAItems(props) {
         color: theme.palette.getContrastText(purple[500]),
         backgroundColor: "rgba(102, 178, 255, 0.25)"
     }));
-    return <div className='qacomponent'>
+    return <div className='qacomponent qa'>
         <h3>{type}</h3>
         <Box
             sx={{
@@ -119,11 +122,11 @@ export default function QAItems(props) {
                     onChange={handleChange}/>
                 <div>
                     <IconButton color="primary" aria-label="add to shopping cart" onClick={() => {
-                    addItem();
-                }} type='submit'>
-                    <AddTaskIcon/>
-                </IconButton> <IconButton color="primary" aria-label="add to shopping cart" onClick={() => {
-                    addItem();
+                        addItem();
+                    }} type='submit'>
+                        <AddTaskIcon/>
+                    </IconButton> <IconButton color="primary" aria-label="delete add item" onClick={() => {
+                    deleteAddItem();
                 }} type='submit'>
                     <DeleteOutlineIcon/>
                 </IconButton>
