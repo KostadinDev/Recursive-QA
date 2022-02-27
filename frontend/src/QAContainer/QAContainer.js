@@ -9,7 +9,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import Instructions from "./Instructions";
 
-function QAContainer() {
+function QAContainer(props) {
     const [sentence, setSentence] = useState("");
     const [segments, setSegments] = useState([]);
     const [questions, setQuestions] = useState([]);
@@ -17,6 +17,11 @@ function QAContainer() {
     const [selectedQuestion, setSelectedQuestion] = useState("");
     const [selectedAnswer, setSelectedAnswer] = useState("");
     const [annotation, setAnnotation] = useState([]);
+
+    let history = props.history;
+    let setHistory = props.setHistory;
+    const instructions = props.instructions;
+
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
     const currentSegment = segments !== undefined && segments.length > 0 ? segments[0]['segment'] : "";
@@ -59,13 +64,16 @@ function QAContainer() {
         }).then((newSegments) =>
             fetch(`${api}/segments?sentence=${answer}`).then(res => res.json()).then((result) => {
                 newSegments = newSegments.concat(result);
-                newSegments = newSegments.concat(segments.shift());
-                setSegments(newSegments.concat(segments.shift()));
+                let segmentsCopy = segments;
+                segmentsCopy.shift();
+                newSegments = newSegments.concat(segmentsCopy);
+                setSegments(newSegments);
                 return newSegments;
             }, (error) => {
                 //TODO handle in case of segment retrieval error
             })
         ).then((newSegments) => {
+            setHistory(history.concat([{'question': question, 'answer': answer, 'segment': currentSegment}]))
             setQuestions([]);
             setAnswers([]);
             return newSegments
@@ -75,7 +83,6 @@ function QAContainer() {
     };
 
     function updateQuestions(newSegments) {
-        console.log("Here: ", newSegments[0]['segment'], newSegments)
         fetch(`${api}/questions?segment=${newSegments[0]['segment']}`).then(res => res.json()).then((result) => {
             setQuestions(result['question']);
         }, (error) => {
@@ -88,7 +95,6 @@ function QAContainer() {
         fetch(`${api}/answers?segment=${segments[0]['segment']}&question=${chosenQuestion}
         &template=${segments[0]['template']}`).then(res => res.json()).then((result) => {
             setAnswers(result['answers']);
-            console.log("HELLO?", result['answers']);
         }, (error) => {
             //TODO handle in case of answer retrieval error
         })
@@ -112,22 +118,34 @@ function QAContainer() {
         setAnnotation(annotation.concat([[question, answer, relation]]));
     }
 
+    function handleClick() {
+        // console.log(props.history);
+        let segmentsCopy = segments;
+        if (segmentsCopy.length >= 2) {
+            segmentsCopy.shift();
+            segmentsCopy.shift();
+        }
+        setSegments(segmentsCopy);
+        setQuestions([]);
+        setAnswers([]);
+        updateQuestions(segmentsCopy);
+    }
+
     return (<div className="outside-qacontainer">
             <div className='qasentence'>
                 <QACard sentence={sentence} segment={currentSegment}/>
             </div>
             <hr/>
             <div className='qacontainer'>
-                {/*<Sentences sentence={sentence} segments={segments}/>*/}
-                <Instructions type='questions'/>
+                <Instructions turnedOn={instructions} type='questions'/>
                 <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}
-                           handleSelect={handleSelectQuestion} type={"Questions"}/>
+                         handleSelect={handleSelectQuestion} type={"Questions"}/>
                 <QAItems items={answers} setItems={setAnswers} selectedItem={selectedAnswer}
                          handleSelect={handleSelectAnswer} type={"Answers"}/>
-                <Instructions type='answers'/>
+                <Instructions turnedOn={instructions} type='answers'/>
             </div>
             <div className='next-button'>
-                <NextButton/>
+                <NextButton handleClick={handleClick}/>
             </div>
             <hr/>
         </div>

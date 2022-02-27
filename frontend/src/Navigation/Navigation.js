@@ -4,14 +4,10 @@ import './navigation.style.css'
 import CompletionBar from "./CompletionBar";
 import Options from "./Options";
 
-export default class Navigation extends React.Component {
-    render() {
-        return <div className={'navigation-container'}>
+export default function Navigation(props) {
+    return (<div className={'navigation-container'}>
 
-            <Logo/>
-            <CompletionBar/>
-            <Options/>
-
-        </div>;
-    }
-};
+        <Logo/>
+        <Options instructions={props.instructions} setInstructions={props.setInstructions}/>
+    </div>);
+}

@@ -1,22 +1,15 @@
 .navigation-container{
+    width:100%;
     display:flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 25px 50px;
 }
-.logo{
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    width:550px;
-    padding-left:25px;
-    padding-right:25px;
-}
 .options{
     display:flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
-    width:33%;
+    width:50%;
     padding-left:25px;
     padding-right:25px;
     border-radius: 5px;
@@ -79,3 +72,23 @@ h1 {
     text-align: center
 }
 
+.logo{
+    font-family: Garamond;
+}
+.logo-cursive{
+    font-family:WalkOn;
+}
+.logo-container{
+    display:flex;
+    flex-direction: row;
+}
+
+.import-text{
+    font-size:16px;
+    text-transform: none;
+    font-weight: normal;
+    letter-spacing: normal;
+}
+.medium-opacity{
+    opacity: 0.9;
+}

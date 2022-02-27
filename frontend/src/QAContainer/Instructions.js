@@ -4,10 +4,11 @@ import Highlighter from "react-highlight-words";
 import * as React from "react";
 
 export default function Instructions(props) {
+    const turnedOn = props.turnedOn;
     const type = props.type;
-    const text = props.type=='questions'?"Select the most appropriate question given the highlighted segment.":"Select the most appropriate answer given the selected question."
+    const text = props.type=='questions'?"Select the most appropriate question given the highlighted segment or create your own.":"Select the most appropriate answer given the selected question or create your own."
     return <div className='instructions'>
-        <Box
+        {turnedOn?        <Box
             sx={{
                 p:1,
                 width: '100%',
@@ -16,7 +17,8 @@ export default function Instructions(props) {
             <>Instructions</>
             <hr/>
             <>{text}</>
-        </Box>
+        </Box>:<></>}
+
 
     </div>;
 }

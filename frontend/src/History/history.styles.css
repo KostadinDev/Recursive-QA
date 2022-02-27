@@ -1,0 +1,23 @@
+
+.history-accordion{
+    opacity: 0.5;
+    width:100%;
+}
+.history{
+    width:60%;
+}
+
+.accordion-summary{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.accordion-details{
+    text-align:left;
+    color:white;
+}
+.accordion-column{
+    width:50%;
+    color:white;
+    /*text-align:left;*/
+}

@@ -36,7 +36,9 @@ export default function QAItems(props) {
     const classes = textInputStyle();
 
     function formatText(text) {
-        return text && type === 'Questions' ? <>What &nbsp;<i>{text.toLowerCase()}</i>?</> : <>{text}</>;
+        const sbar = text.toLowerCase().includes("if ")?true:false;
+        const question = sbar?"What happens ": "What "
+        return text && type === 'Questions' ? <>{question}{text.toLowerCase()}?</> : <>{text}</>;
     }
 
 
