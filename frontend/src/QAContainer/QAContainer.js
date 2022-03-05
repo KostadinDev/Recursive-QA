@@ -73,7 +73,7 @@ function QAContainer(props) {
                 //TODO handle in case of segment retrieval error
             })
         ).then((newSegments) => {
-            setHistory(history.concat([{'question': question, 'answer': answer, 'segment': currentSegment}]))
+            setHistory([{'question': question, 'answer': answer, 'segment': currentSegment}].concat(history))
             setQuestions([]);
             setAnswers([]);
             return newSegments

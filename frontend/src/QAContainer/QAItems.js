@@ -46,7 +46,7 @@ export default function QAItems(props) {
         event.preventDefault();
         let newItemCopy = newItem.toLowerCase();
         const wordsInNewItem = newItemCopy.split(' ');
-        if (wordsInNewItem[0] == 'what') {
+        if (wordsInNewItem[0].toLowerCase() == 'what') {
             newItemCopy = (newItemCopy.replace('what ', ''));
         }
         if (newItemCopy[newItemCopy.length - 1] == '?') {
