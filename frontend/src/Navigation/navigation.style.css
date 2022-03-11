@@ -1,27 +1,29 @@
-.navigation-container{
-    width:100%;
-    display:flex;
+.navigation-container {
+    width: 80%;
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
-    padding: 25px 50px;
+    padding: 25px 0px;
 }
-.options{
-    display:flex;
+
+.options {
+    display: flex;
     flex-direction: row;
-    justify-content: center;
-    width:50%;
-    padding-left:25px;
-    padding-right:25px;
+    align-self: center;
+    justify-content: right;
+    width: 80%;
     border-radius: 5px;
 }
-.completion-bar{
-    display:flex;
+
+.completion-bar {
+    display: flex;
     flex-direction: column;
     justify-content: center;
-    width:550px;
-    padding-left:25px;
-    padding-right:25px;
+    width: 550px;
+    padding-left: 25px;
+    padding-right: 25px;
 }
+
 .progress-title {
     font-size: 16px;
     font-weight: 700;
@@ -41,8 +43,8 @@
     position: relative;
     -webkit-animation: animate-positive 2s;
     animation: animate-positive 2s;
-    width:65%;
-    background:orange;
+    width: 65%;
+    background: orange;
 }
 
 .progress .progress-value {
@@ -72,23 +74,44 @@ h1 {
     text-align: center
 }
 
-.logo{
+.logo {
     font-family: Garamond;
 }
-.logo-cursive{
-    font-family:WalkOn;
+
+.logo-cursive {
+    font-family: WalkOn;
 }
-.logo-container{
-    display:flex;
+
+.logo-container {
+    display: flex;
     flex-direction: row;
 }
 
-.import-text{
-    font-size:1vw;
+.import-text {
+    font-size: 1vw;
     text-transform: none;
     font-weight: normal;
     letter-spacing: normal;
 }
-.medium-opacity{
+
+.medium-opacity {
     opacity: 0.9;
+}
+
+.options-item {
+    margin-left: 20px;
+    font-size:16px;
+    display:flex;
+    flex-direction: row;
+    align-self: center;
+}
+
+.auth {
+    height: 41px;
+    width: 120px;
+    background-color: #5090D3;
+}
+
+.user-badge {
+    color:white;
 }

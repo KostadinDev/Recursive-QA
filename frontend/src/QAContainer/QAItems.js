@@ -99,11 +99,11 @@ export default function QAItems(props) {
                     items ? items.map(function (item) {
 
                         return item !== selectedItem ?
-                            <QAButton className="qa-button selected-qa-button" onClick={() => {
+                            <QAButton key = {item} className="qa-button selected-qa-button" onClick={() => {
                                 props.handleSelect(item);
                             }}>
                                 {formatText(item)}
-                            </QAButton> : <QAButtonSelected className="qa-button selected-qa-button" onClick={() => {
+                            </QAButton> : <QAButtonSelected key = {item}  className="qa-button selected-qa-button" onClick={() => {
                                 props.handleSelect(item);
                             }}>
                                 {formatText(item)}

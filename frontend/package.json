@@ -21,6 +21,7 @@
     "react-bootstrap": "^2.1.1",
     "react-bootstrap-icons": "^1.7.2",
     "react-dom": "^17.0.2",
+    "react-google-login": "^5.2.2",
     "react-highlight-words": "^0.17.0",
     "react-scripts": "5.0.0",
     "react-virtualized": "^9.22.3",

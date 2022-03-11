@@ -43,7 +43,6 @@ function QAContainer(props) {
         });
         await fetch(`${api}/questions?segment=${currentSegments[0]['segment']}`).then(res => res.json()).then((result) => {
             currentQuestions = result['question'];
-            console.log(result);
         }, (error) => {
             //TODO handle in case of segment retrieval error
         });

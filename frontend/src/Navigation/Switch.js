@@ -185,7 +185,7 @@ export default function CustomSwitch(props) {
     const checked = props.checked;
     const handleChange = props.handleChange;
     return (
-        <Tooltip title={tooltipInfo}>
+        <Tooltip title={tooltipInfo} className={"options-item"}>
             <FormGroup>
                 <FormControlLabel
                     control={<Android12Switch checked={checked}/>}
