@@ -30,20 +30,22 @@ class RQAParser:
     @staticmethod
     def get_answers(question, segment, template):
         answers = []
+        print(template, 'SSSS')
         phrases = RQAParser.get_phrases(segment)
-        if template == 1 or template == 2:
+        if template == 0 or template == 2:
             if 'NP' in phrases.keys():
                 for np in phrases['NP']:
                     answers.append(f'{np}')
-        elif template == 0:
+        elif template == 1:
             if 'NP' in phrases.keys():
                 for np in phrases['NP']:
                     if 'VP' in phrases.keys():
                         for vp in phrases['VP']:
                             answers.append(f'{np} {vp}')
-        print("answers before filter: ", answers)
+        print("answers before filter: ", answers, question)
         answers = RQAParser.filter_edit_distance(
             RQAParser.filter_not_in_question(answers, question))  # TODO make sure filtering doesnt hurt more than helps
+        print("answers before filter: ", answers)
         return {'answers': answers}
 
     @staticmethod
@@ -56,10 +58,9 @@ class RQAParser:
 
     @staticmethod
     def get_segments(sentence, template=0):
-        print(sentence, template)
+        phrases = RQAParser.get_phrases(sentence, recursive=False)
         segments = []
         if template == 0:  # Unknown template
-            phrases = RQAParser.get_phrases(sentence, recursive=False)
             if 'S' in phrases.keys():
                 if len(phrases['S']) == 1:
                     return RQAParser.get_segments(str(phrases['S'][0]), template)
@@ -75,6 +76,7 @@ class RQAParser:
             elif 'ADVP' in phrases.keys():
                 template = 2  # TEMPLATE THEN
                 return RQAParser.get_segments(sentence, template)
+
         segments.append({'segment': sentence, 'template': template})
         return segments
 
