@@ -69,7 +69,7 @@ def post_sentences():
     user = data['user']
     records = []
     for sentence in sentences:
-        records.append({'user': user['email'], 'sentence': sentence})
+        records.append({'user': user['email'], 'sentence': sentence, 'status': 'incomplete'})
     db.records.insert_many(records)
     return Response(status=200)
 
