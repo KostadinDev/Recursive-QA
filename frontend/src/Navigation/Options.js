@@ -26,7 +26,7 @@ export default function Options(props) {
         <Switch label={instructionsTitle} tooltipInfo={instructionsTooltip} checked={instructions}
                 handleChange={handleChangeInstructions}/>
         <Switch className="options-item" label={rapidModeTitle} tooltipInfo={rapidModeTooltip}/>
-        <ImportButton/>
-        <Authentication user={props.user} setUser={props.setUser}/>
+        <Authentication user={props.user} setUser={props.setUser} setRecords={props.setRecords}
+                        fetchRecords={props.fetchRecords} clearData={props.clearData}/>
     </div>;
 }

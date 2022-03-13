@@ -24,12 +24,12 @@ function Mode(props) {
                     size = 'small'
 
                 >
-                    <ToggleButton value="data" aria-label="left aligned"
+                    <ToggleButton value="tool" aria-label="left aligned"
                                   sx={{color: "white", textTransform: "unset", fontSize:16}}>
-                        <>Data</>
-                    </ToggleButton>
-                    <ToggleButton value="tool" aria-label="centered" sx={{color: "white", textTransform: "unset", fontSize:16}}>
                         <>Tool</>
+                    </ToggleButton>
+                    <ToggleButton value="data" aria-label="centered" sx={{color: "white", textTransform: "unset", fontSize:16}}>
+                        <>Data</>
                     </ToggleButton>
                 </ToggleButtonGroup>
 

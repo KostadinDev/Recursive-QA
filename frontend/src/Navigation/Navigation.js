@@ -10,10 +10,13 @@ export default function Navigation(props) {
         <Logo/>
         <Options instructions={props.instructions}
                  setInstructions={props.setInstructions}
-                 user = {props.user}
-                 setUser = {props.setUser}
-                 mode = {props.mode}
-                 setMode = {props.setMode}
+                 user={props.user}
+                 setUser={props.setUser}
+                 mode={props.mode}
+                 setMode={props.setMode}
+                 setRecords={props.setRecords}
+                 fetchRecords={props.fetchRecords}
+                 clearData={props.clearData}
         />
     </div>);
 }

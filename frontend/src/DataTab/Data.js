@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     DataGrid, GridRowsProp, GridColDef, GridToolbarContainer,
-    GridToolbarDensitySelector, GridToolbar
+    GridToolbarDensitySelector,GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbar
 } from '@mui/x-data-grid';
 
 import {
@@ -10,15 +10,28 @@ import {
     useGridApiContext,
     useGridSelector,
 } from '@mui/x-data-grid';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Pagination from '@mui/material/Pagination';
 import PaginationItem from '@mui/material/PaginationItem';
+import ImportButton from "../Navigation/ImportButton";
+import RemoveButton from "./RemoveButton";
+import './data.styles.css';
+import FlagButton from "./FlagButton";
+import ScheduleButton from "./ScheduleButton";
+import Flag from '@mui/icons-material/Flag';
+import Schedule from '@mui/icons-material/Schedule';
+import Done from '@mui/icons-material/Done';
+import PriorityHigh from '@mui/icons-material/PriorityHigh';
+import {GridRenderCellParams} from "@mui/x-data-grid";
+import ExportButton from "./ExportButton";
+import ViewButton from "./ViewButton";
+import AnnotationView from "./AnnotationView";
 
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+const StyledDataGrid = styled(DataGrid)(({theme}) => ({
     border: 0,
     // color:
     //     theme.palette.mode === 'light' ? 'rgba(0,0,0,.85)' : 'rgba(255,255,255,0.85)',
-    color:"white",
+    color: "white",
     fontFamily: [
         '-apple-system',
         'BlinkMacSystemFont',
@@ -39,8 +52,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     '& .MuiDataGrid-iconSeparator': {
         display: 'none',
     },
-    '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
-    },
+    '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {},
     '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
         borderBottom: `1px solid ${
             theme.palette.mode === 'light' ? '#f0f0f0' : '#303030'
@@ -52,7 +64,7 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
     },
     '& .MuiPaginationItem-root': {
         borderRadius: 0,
-        color:"white",
+        color: "white",
     },
     ...customCheckbox(theme),
 }));
@@ -60,41 +72,79 @@ const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
 function CustomToolbar() {
     return (
         <GridToolbarContainer>
+            <GridToolbarColumnsButton/>
+            <GridToolbarFilterButton/>
             <GridToolbarDensitySelector/>
         </GridToolbarContainer>
     );
 }
 
-const rows: GridRowsProp = [
-    {id: 1, col1: 'Hello', col2: 'World'},
-    {id: 2, col1: 'DataGridProDataGridProDataGridProDataGridPro', col2: 'is Awesome'},
-    {id: 3, col1: 'MUI', col2: 'is Amazing'},
-    {id: 4, col1: 'Hello', col2: 'World'},
-    {id: 5, col1: 'DataGridPro', col2: 'is Awesome'},
-    {id: 6, col1: 'MUI', col2: 'is Amazing'},
-    {id: 7, col1: 'Hello', col2: 'World'},
-    {id: 8, col1: 'DataGridPro', col2: 'is Awesome'},
-    {id: 9, col1: 'MUI', col2: 'is Amazing'},
-    {id: 10, col1: 'Hello', col2: 'World'},
-    {id: 11, col1: 'DataGridPro', col2: 'is Awesome'},
-    {id: 12, col1: 'MUI', col2: 'is Amazing'},
-    {id: 13, col1: 'Hello', col2: 'World'},
-    {id: 14, col1: 'DataGridPro', col2: 'is Awesome'},
-    {id: 15, col1: 'MUI', col2: 'is Amazing'},
-    {id: 16, col1: 'Hello', col2: 'World'},
-    {id: 17, col1: 'DataGridPro', col2: 'is Awesome'},
-    {id: 18, col1: 'MUI', col2: 'is Amazing'},
-];
 
 const columns: GridColDef[] = [
-    {field: 'col1', headerName: 'Sentence', width: 600},
-    {field: 'col2', headerName: 'Status', width: 150},
-    {field: 'col5', headerName: 'Action', width: 150},
+    {field: 'sentence', headerName: 'Sentence', width: 800},
+    {
+        field: 'status', headerName: 'Status', width: 150, renderCell: (params: GridRenderCellParams<String>) => (
+            <div style={{
+                display: "flex",
+                width: "100%",
+                "flex-direction": "row",
+                "justify-content": "left",
+            }}>{params.value == "complete" ? <div style={{
+                border: "1px solid",
+                'border-radius': '15px',
+                fontSize: "12px",
+                padding: '2px 8px',
+                color: "#2e7d32",
+                borderColor: "rgb(102, 187, 106)"
+            }}><Done fontSize={"small"}/> completed</div> : ""}{
+                params.value == "scheduled" ?
+                    <div style={{
+                        border: "1px solid",
+                        'border-radius': '15px',
+                        fontSize: "12px",
+                        padding: '2px 8px',
+                        color: "rgb(245, 124, 0)",
+                        borderColor: "rgb(255, 167, 38)"
+                    }}><Schedule fontSize={"small"}/> scheduled</div> : ""}
+                {
+                    params.value == "incomplete" ?
+                        <div style={{
+                            border: "1px solid",
+                            'border-radius': '15px',
+                            fontSize: "12px",
+                            padding: '2px 8px',
+                            color: "rgb(211, 47, 47)",
+                            borderColor: "rgb(244, 67, 54)"
+                        }}><PriorityHigh fontSize={"small"}/> incomplete</div> : ""}</div>
+        ),
+    },
+    {
+        field: 'scheduled', headerName: 'Scheduled', width: 120, renderCell: (params: GridRenderCellParams<String>) => (
+            <div style={{
+                display: "flex",
+                width: "100%",
+                "flex-direction": "row",
+                "justify-content": "left",
+                "margin-left": "25px",
+                color: "rgb(245, 124, 0)"
+            }}>{params.value ? <Schedule/> : ""}</div>
+        ),
+    },
+    {
+        field: 'flagged', headerName: 'Flagged', width: 120, renderCell: (params: GridRenderCellParams<String>) => (
+            <div style={{
+                display: "flex",
+                width: "100%",
+                "flex-direction": "row",
+                "justify-content": "left",
+                "margin-left": "20px"
+            }}>{params.value ? <Flag color={"secondary"}/> : ""}</div>
+        ),
+    },
     {field: 'col3', headerName: 'Date', width: 150},
     {field: 'col6', headerName: 'Time', width: 150},
-    {field: 'col4', headerName: 'User', width: 150},
+    {field: 'user', headerName: 'User', width: 150},
 ];
-
 
 
 function customCheckbox(theme) {
@@ -115,7 +165,6 @@ function CustomPagination() {
     const apiRef = useGridApiContext();
     const page = useGridSelector(apiRef, gridPageSelector);
     const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-
     return (
         <Pagination
             color="primary"
@@ -124,32 +173,58 @@ function CustomPagination() {
             page={page + 1}
             count={pageCount}
             // @ts-expect-error
-            renderItem={(props2) => <PaginationItem {...props2} disableRipple />}
+            renderItem={(props2) => <PaginationItem {...props2} disableRipple/>}
             onChange={(event, value) => apiRef.current.setPage(value - 1)}
         />
     );
 }
 
 
-export default function Data() {
+export default function Data(props) {
+    const [selectionModel, setSelectionModel] = useState();
+    const rows: GridRowDef = [...props.records];
     const [pageSize, setPageSize] = React.useState(25);
     return (
-        <div style={{width: '60%', height: '600px'}}>
+        <div style={{width: '80%', height: '450px'}}>
+            <div style={{height:"250px", display:"flex", "flex-direction":"row"}}>
+                <AnnotationView/>
+            </div>
             <div style={{height: '100%', display: 'flex'}}>
                 <div style={{flexGrow: 1}}>
+                    {/*<button onClick={() => {*/}
+                    {/*    console.log(props.records);*/}
+                    {/*}}> button*/}
+                    {/*</button>*/}
                     <StyledDataGrid rows={rows}
-                              columns={columns}
-                              sx={{color: "white"}}
-                              // components={{
-                              //     Toolbar: GridToolbar,
-                              // }}
-                              pageSize={10}
-                              rowsPerPageOptions={[5]}
-                              components={{
-                                  Pagination: CustomPagination,
-                              }}
-                              checkboxSelection/>
+                                    columns={columns}
+                                    sx={{color: "white"}}
+                                    pageSize={10}
+                                    rowsPerPageOptions={[5]}
+                                    components={{
+                                        Pagination: CustomPagination,
+                                        Toolbar: CustomToolbar,
+                                    }}
+                                    checkboxSelection
+                                    onSelectionModelChange={(newSelectionModel) => {
+                                        setSelectionModel(newSelectionModel)
+                                    }}
+                                    selectionModel={selectionModel}
+                    />
                 </div>
+            </div>
+            <div className={"data-buttons"}>
+                <ImportButton records={props.records} setRecords={props.setRecords} user={props.user}
+                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}
+                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                <ViewButton records={props.records} setRecords={props.setRecords} user={props.user}
+                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                <ScheduleButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                <RemoveButton records={props.records} setRecords={props.setRecords} user={props.user}
+                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                <FlagButton records={props.records} setRecords={props.setRecords} user={props.user}
+                            selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
             </div>
         </div>
     );
