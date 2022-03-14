@@ -7,7 +7,7 @@ export default function NextButton(props) {
     return (
         <Box sx={{'& button': {m: 1}}}>
             <Button variant="outlined" size="large" onClick={() => {handleClick()}}>
-                Skip
+                Continue
             </Button>
         </Box>
     );

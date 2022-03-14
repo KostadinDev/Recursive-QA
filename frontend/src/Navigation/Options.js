@@ -22,7 +22,9 @@ export default function Options(props) {
         {
             props.user ? <UserBadge user={props.user}/> : ""
         }
-        <Mode mode={props.mode} setMode={props.setMode}/>
+        <Mode mode={props.mode} setMode={props.setMode}
+              setRecords={props.setRecords} records={props.records}
+              setScheduled={props.setScheduled}/>
         <Switch label={instructionsTitle} tooltipInfo={instructionsTooltip} checked={instructions}
                 handleChange={handleChangeInstructions}/>
         <Switch className="options-item" label={rapidModeTitle} tooltipInfo={rapidModeTooltip}/>

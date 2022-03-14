@@ -15,6 +15,8 @@ export default function Navigation(props) {
                  mode={props.mode}
                  setMode={props.setMode}
                  setRecords={props.setRecords}
+                 records={props.records}
+                 setScheduled={props.setScheduled}
                  fetchRecords={props.fetchRecords}
                  clearData={props.clearData}
         />

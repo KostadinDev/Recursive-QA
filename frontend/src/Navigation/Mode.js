@@ -8,7 +8,10 @@ function Mode(props) {
 
     const handleAlignment = (event, newMode) => {
         if (newMode !== null) {
+            // console.log("hello", props.records, props.setScheduled)
+            // props.setScheduled(props.records.filter((record) => "scheduled" in record && record['scheduled'] === true));
             props.setMode(newMode);
+            localStorage.setItem('mode', newMode);
         }
     };
 

@@ -8,11 +8,58 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import Instructions from "./Instructions";
+import SubmitButton from "./SubmitButton";
+import FlagButton from "./FlagButton";
+import RemoveButton from "./RemoveButton";
+import SkipButton from "./SkipButton";
+
+class Segment {
+    constructor(text, startingIndex, parent) {
+        this.text = text;
+        this.type = null;
+        this.children = [];
+        this.childrenRelations = [];
+        this.startingIndex = startingIndex;
+        this.endingIndex = startingIndex + text.length;
+        this.parent = parent;
+    }
+}
+
+class Relation {
+    constructor(qnode, anode, type) {
+        this.qnode = qnode;
+        this.anode = anode;
+        this.type = type;
+    }
+}
+
+class TreeIterator {
+    constructor(root) {
+        this.root = root;
+        this.current = root;
+        this.ordering = [root];
+    }
+
+    get next() {
+        return this.ordering.shift();
+    }
+
+    insert(children) {
+        this.ordering = children.concat(this.ordering);
+    }
+}
+
 
 function QAContainer(props) {
-    const [sentence, setSentence] = useState("");
+    const [currentRecord, setCurrentRecord] = useState(props.scheduled ? props.scheduled[0] : null);
     const [segments, setSegments] = useState([]);
     const [questions, setQuestions] = useState([]);
+    const [tree, setTree] = useState();
+
+
+    const [sentence, setSentence] = useState("");
+    // const [segments, setSegments] = useState([]);
+    // const [questions, setQuestions] = useState([]);
     const [answers, setAnswers] = useState([]);
     const [selectedQuestion, setSelectedQuestion] = useState("");
     const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -41,19 +88,101 @@ function QAContainer(props) {
         }, (error) => {
             //TODO handle in case of segment retrieval error
         });
-        await fetch(`${api}/questions?segment=${currentSegments[0]['segment']}`).then(res => res.json()).then((result) => {
-            currentQuestions = result['question'];
-        }, (error) => {
-            //TODO handle in case of segment retrieval error
-        });
+        await fetch(`${api}/questions?segment=${currentSegments[0]['segment']}`).then(res => res.json())
+            .then((result) => {
+                currentQuestions = result['question'];
+            }, (error) => {
+                //TODO handle in case of segment retrieval error
+            });
         setSentence(currentSentence);
         setSegments(currentSegments);
         setQuestions(currentQuestions);
     };
 
-    useEffect(() => {
-        mount();
-    }, []);
+    const submitRecord = async () => {
+
+        if (props.scheduled && props.scheduled[0]) {
+            const d = new Date();
+            const options = {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    history: props.history,
+                    // rapid: props.mode,
+                    record: props.scheduled[0].id,
+                    date: d.getTime()
+                })
+            };
+            await fetch('http://localhost:5050/submit', options)
+                .then(async response => {
+                    console.log(response.ok)
+                    if (!response.ok) {
+                        // const error = (data && data.message) || response.status;
+                        return Promise.reject(response.status);
+                    }
+                }).catch(error => {
+                    alert(error);
+                });
+            if (props.user) {
+                await props.fetchRecords(props.user);
+                props.scheduled.shift();
+                props.setScheduled(props.scheduled);
+                await onMount();
+            }
+        }
+
+    }
+    const removeRecord = async () => {
+        if (props.scheduled && props.scheduled[0]) {
+            const options = {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({records: [props.scheduled[0].id]})
+            };
+            await fetch('http://localhost:5050/remove', options)
+                .then(async response => {
+                    console.log(response.ok)
+                    if (!response.ok) {
+                        // const error = (data && data.message) || response.status;
+                        return Promise.reject(response.status);
+                    }
+                }).catch(error => {
+                    alert(error);
+                });
+            if (props.user) {
+                await props.fetchRecords(props.user);
+                props.scheduled.shift();
+                props.setScheduled(props.scheduled);
+                await onMount();
+            }
+        }
+    }
+    const skipRecord = async () => {
+
+        if (props.scheduled && props.scheduled[0]) {
+            const options = {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({record: props.scheduled[0].id})
+            };
+            await fetch('http://localhost:5050/skip', options)
+                .then(async response => {
+                    console.log(response.ok)
+                    if (!response.ok) {
+                        // const error = (data && data.message) || response.status;
+                        return Promise.reject(response.status);
+                    }
+                }).catch(error => {
+                    alert("here?");
+                });
+            if (props.user) {
+                await props.fetchRecords(props.user);
+                props.scheduled.shift();
+                props.setScheduled(props.scheduled);
+                await onMount();
+            }
+        }
+    }
 
     function updateSegments(question, answer) {
         fetch(`${api}/segments?sentence=${question}`).then(res => res.json()).then((result) => {
@@ -78,15 +207,24 @@ function QAContainer(props) {
             return newSegments
         }).then((newSegments) => {
             updateQuestions(newSegments);
+            console.log("we get here??", newSegments.length);
+            if (newSegments.length == 0) {
+                console.log("we dont get here mate?");
+                submitRecord()
+            }
         });
     };
 
     function updateQuestions(newSegments) {
-        fetch(`${api}/questions?segment=${newSegments[0]['segment']}`).then(res => res.json()).then((result) => {
-            setQuestions(result['question']);
-        }, (error) => {
-            //TODO handle in case of segment retrieval error
-        });
+        if (newSegments.length) {
+            fetch(`${api}/questions?segment=${newSegments[0]['segment']}`).then(res => res.json()).then((result) => {
+                if (result) {
+                    setQuestions(result['questions']);
+                }
+            }, (error) => {
+                //TODO handle in case of segment retrieval error
+            });
+        }
     }
 
     function handleSelectQuestion(chosenQuestion) {
@@ -117,22 +255,66 @@ function QAContainer(props) {
         setAnnotation(annotation.concat([[question, answer, relation]]));
     }
 
-    function handleClick() {
+    function continueRecord() {
         // console.log(props.history);
-        let segmentsCopy = segments;
-        if (segmentsCopy.length >= 2) {
-            segmentsCopy.shift();
-            segmentsCopy.shift();
+        if (segments) {
+            let segmentsCopy = segments;
+            if (segmentsCopy.length >= 2) {
+                segmentsCopy.shift();
+                segmentsCopy.shift();
+            } else if (segmentsCopy.length >= 1) {
+                segmentsCopy.shift();
+            }
+            setSegments(segmentsCopy);
+            setQuestions([]);
+            setAnswers([]);
+            updateQuestions(segmentsCopy);
         }
-        setSegments(segmentsCopy);
-        setQuestions([]);
-        setAnswers([]);
-        updateQuestions(segmentsCopy);
     }
+
+    const onMount = async () => {
+
+        setQuestions([]);
+        setSegments([]);
+        setAnswers([]);
+        props.setHistory([])
+        if (props.scheduled && props.scheduled[0]) {
+            console.log("mounting again")
+            let newSegments, newQuestions;
+            await fetch(`${api}/segments?sentence=${props.scheduled[0].sentence}`).then(res => res.json()).then((result) => {
+                newSegments = result;
+                console.log("new segments: ", newSegments, props.scheduled[0].sentence)
+            }, (error) => {
+                //TODO handle in case of segment retrieval error
+            });
+            await fetch(`${api}/questions?segment=${newSegments[0]['segment']}`).then(res => res.json()).then((result) => {
+                newQuestions = result['questions'];
+                console.log(result['questions'], "Q")
+
+            }, (error) => {
+                //TODO handle in case of segment retrieval error
+            });
+
+            setSegments(newSegments);
+            setQuestions(newQuestions);
+
+        }
+    }
+    useEffect(() => {
+        //mount();
+        onMount().catch();
+
+    }, []);
+
 
     return (<div className="outside-qacontainer">
             <div className='qasentence'>
-                <QACard sentence={sentence} segment={currentSegment}/>
+                {
+                    props.scheduled && props.scheduled[0] ?
+
+                        <QACard scheduled={props.scheduled} sentence={props.scheduled[0]['sentence']}
+                                segment={currentSegment}/> : ""
+                }
             </div>
             <hr/>
             <div className='qacontainer'>
@@ -143,8 +325,18 @@ function QAContainer(props) {
                          handleSelect={handleSelectAnswer} type={"Answers"}/>
                 <Instructions turnedOn={instructions} type='answers'/>
             </div>
-            <div className='next-button'>
-                <NextButton handleClick={handleClick}/>
+            <div className={"qa-button-container"}>
+                <div className='qa-buttons'>
+                    <div className="qa-button-group">
+                        <NextButton handleClick={continueRecord}/>
+                        <SubmitButton submitRecord={submitRecord}/>
+                    </div>
+                    <div className="qa-button-group">
+                        <SkipButton skipRecord={skipRecord}/>
+                        <FlagButton scheduled={props.scheduled} fetchRecords={props.fetchRecords} user={props.user}/>
+                        <RemoveButton removeRecord={removeRecord}/>
+                    </div>
+                </div>
             </div>
             <hr/>
         </div>

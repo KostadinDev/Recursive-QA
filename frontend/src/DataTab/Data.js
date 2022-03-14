@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {
     DataGrid, GridRowsProp, GridColDef, GridToolbarContainer,
-    GridToolbarDensitySelector,GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbar
+    GridToolbarDensitySelector, GridToolbarColumnsButton, GridToolbarFilterButton, GridToolbar
 } from '@mui/x-data-grid';
 
 import {
@@ -26,6 +26,7 @@ import {GridRenderCellParams} from "@mui/x-data-grid";
 import ExportButton from "./ExportButton";
 import ViewButton from "./ViewButton";
 import AnnotationView from "./AnnotationView";
+import {SkipNext} from "@mui/icons-material";
 
 const StyledDataGrid = styled(DataGrid)(({theme}) => ({
     border: 0,
@@ -141,6 +142,17 @@ const columns: GridColDef[] = [
             }}>{params.value ? <Flag color={"secondary"}/> : ""}</div>
         ),
     },
+    {
+        field: 'skipped', headerName: 'Skipped', width: 120, renderCell: (params: GridRenderCellParams<String>) => (
+            <div style={{
+                display: "flex",
+                width: "100%",
+                "flex-direction": "row",
+                "justify-content": "left",
+                "margin-left": "20px"
+            }}>{params.value ? <SkipNext color={"warning"}/> : ""}</div>
+        ),
+    },
     {field: 'col3', headerName: 'Date', width: 150},
     {field: 'col6', headerName: 'Time', width: 150},
     {field: 'user', headerName: 'User', width: 150},
@@ -186,15 +198,16 @@ export default function Data(props) {
     const [pageSize, setPageSize] = React.useState(25);
     return (
         <div style={{width: '80%', height: '450px'}}>
-            <div style={{height:"250px", display:"flex", "flex-direction":"row"}}>
+            <div style={{height: "250px", display: "flex", "flex-direction": "row"}}>
                 <AnnotationView/>
             </div>
             <div style={{height: '100%', display: 'flex'}}>
                 <div style={{flexGrow: 1}}>
-                    {/*<button onClick={() => {*/}
-                    {/*    console.log(props.records);*/}
-                    {/*}}> button*/}
-                    {/*</button>*/}
+                    <button onClick={() => {
+                        console.log(props.scheduled);
+                        console.log(props.records);
+                    }}> button
+                    </button>
                     <StyledDataGrid rows={rows}
                                     columns={columns}
                                     sx={{color: "white"}}
@@ -218,7 +231,7 @@ export default function Data(props) {
                 <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}
                               selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <ViewButton records={props.records} setRecords={props.setRecords} user={props.user}
-                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                            selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <ScheduleButton records={props.records} setRecords={props.setRecords} user={props.user}
                                 selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <RemoveButton records={props.records} setRecords={props.setRecords} user={props.user}

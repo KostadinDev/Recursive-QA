@@ -6,22 +6,23 @@ import React, {useState, useEffect} from 'react';
 import Data from "./DataTab/Data";
 
 function App() {
-    const [instructions, setInstructions] = useState(true)
-    const [history, setHistory] = useState([])
-    const [mode, setMode] = useState("tool")
+    const [instructions, setInstructions] = useState(true);
+    const [history, setHistory] = useState([]);
+    const [mode, setMode] = useState(
+        localStorage.getItem('mode') ? (localStorage.getItem('mode')) : "left");
     const [user, setUser] = useState(
-        localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
-    );
+        localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null);
     const [records, setRecords] = useState([]);
+    const [scheduled, setScheduled] = useState([]);
 
-    const fetchRecords = (userData) => {
+    const fetchRecords = async (userData) => {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             cors: 'no-cors',
             body: JSON.stringify({user: userData})
         };
-        fetch('http://localhost:5050/records', requestOptions)
+        await fetch('http://localhost:5050/records', requestOptions)
             .then(async response => {
                 const isJson = response.headers.get('content-type')?.includes('application/json');
                 const data = isJson && await response.json();
@@ -30,12 +31,16 @@ function App() {
                     return Promise.reject(error);
                 }
                 if (records != data.records) {
-                    setRecords(data.records);
+                    console.log("updating records")
+                    await setRecords(data.records);
+                    await setScheduled(data.records.filter((record) => "scheduled" in record && record['scheduled'] === true));
                 }
             })
             .catch(error => {
                 alert(error);
             });
+
+        console.log("finished fetching");
     }
     const clearData = () => {
         setRecords([]);
@@ -45,18 +50,28 @@ function App() {
         if (user && !records.length) {
             fetchRecords(user)
         }
-    }, [records]);
+    }, [records, scheduled]);
     return (
         <div className="App">
             <Navigation instructions={instructions} setInstructions={setInstructions} user={user} setUser={setUser}
-                        mode={mode} setMode={setMode} setRecords={setRecords} fetchRecords={fetchRecords} clearData={clearData}/>
+                        mode={mode} setMode={setMode} setRecords={setRecords} fetchRecords={fetchRecords}
+                        clearData={clearData}/>
             {
                 mode === "tool" ?
                     <>
-                        <QAContainer instructions={instructions} history={history} setHistory={setHistory} user={user}/>
+                        <QAContainer instructions={instructions}
+                                     scheduled={scheduled} setScheduled={setScheduled}
+                                     history={history} setHistory={setHistory}
+                                     user={user}
+                                     fetchRecords={fetchRecords}
+                                     mode={mode}
+                        />
                         <History history={history} setHistory={setHistory} user={user}/>
                     </>
-                    : <Data user={user} records={records} setRecords={setRecords} fetchRecords={fetchRecords}></Data>
+                    : <Data user={user}
+                            records={records} setRecords={setRecords}
+                            scheduled={scheduled} setScheduled={setScheduled}
+                            fetchRecords={fetchRecords}/>
             }
 
         </div>
