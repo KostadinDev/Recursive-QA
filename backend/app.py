@@ -5,6 +5,7 @@ from spec_rqa.rqa_parser import RQAParser
 from pymongo import MongoClient
 from helpers import serialize_records
 import json
+from bson.objectid import ObjectId
 
 cluster = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
 client = MongoClient(cluster)
@@ -35,7 +36,6 @@ def get_questions():
     parser = reqparse.RequestParser()
     parser.add_argument('segment', type=str)
     segment = parser.parse_args()['segment']
-    print(segment, 'here')
     # segment = 'If it is a directory, NFS4ERR_ISDIR is returned'
     questions = RQAParser.get_questions(segment)
     return json.dumps(questions)
@@ -82,6 +82,70 @@ def get_records():
         return Response(status=404)
     records = serialize_records(db.records.find({'user': user_requester['email']}))
     return Response(response=records, status=200, content_type='application/json')
+
+
+@app.route("/schedule", methods=['POST'])
+def schedule():
+    record_ids = request.get_json(force=True)['records']
+    for i in range(len(record_ids)):
+        record_ids[i] = ObjectId(record_ids[i])
+    db_records = db.records.find({'_id': {'$in': record_ids}})
+    for db_record in db_records:
+        if 'scheduled' in db_record.keys():
+            if db_record['scheduled'] is None or db_record['scheduled'] is False:
+                new_scheduled = True
+            else:
+                new_scheduled = None
+        else:
+            new_scheduled = True
+        id = db_record['_id']
+        result = db.records.update_one({'_id': {"$eq": id}}, {'$set': {'scheduled': new_scheduled}})
+    return Response(status=200, content_type='application/json')
+
+
+@app.route("/flag", methods=['POST'])
+def flag():
+    record_ids = request.get_json(force=True)['records']
+    for i in range(len(record_ids)):
+        record_ids[i] = ObjectId(record_ids[i])
+    db_records = db.records.find({'_id': {'$in': record_ids}})
+    for db_record in db_records:
+        if 'flagged' in db_record.keys():
+            if db_record['flagged'] is None:
+                new_flagged = True
+            else:
+                new_flagged = None
+        else:
+            new_flagged = True
+        id = db_record['_id']
+        result = db.records.update_one({'_id': {"$eq": id}}, {'$set': {'flagged': new_flagged}})
+    return Response(status=200, content_type='application/json')
+
+
+@app.route("/skip", methods=['POST'])
+def skip():
+    record_id = request.get_json(force=True)['record']
+    record_id = ObjectId(record_id)
+    result = db.records.update_one({'_id': {"$eq": record_id}}, {'$set': {'skipped': True, 'scheduled': False}})
+    return Response(status=200, content_type='application/json')
+
+
+@app.route("/remove", methods=['POST'])
+def remove():
+    record_ids = request.get_json(force=True)['records']
+    for i in range(len(record_ids)):
+        record_ids[i] = ObjectId(record_ids[i])
+    result = db.records.delete_many({'_id': {'$in': record_ids}})
+    return Response(status=200, content_type='application/json')
+
+
+@app.route("/submit", methods=['POST'])
+def submit():
+    data = request.get_json(force=True)
+    result = db.records.update_one({'_id': {'$eq': ObjectId(data['record'])}},
+                                   {"$set": {"history": data['history'],
+                                             "status": "complete", "scheduled": None, "date": data['date']}})
+    return Response(status=200, content_type='application/json')
 
 
 @app.route("/sentence", methods=['GET'])

@@ -8,3 +8,4 @@ def serialize_records(records):
         records[i]['id'] = str(records[i]['_id'])
         del records[i]['_id']
     return json.dumps({'records': records})
+

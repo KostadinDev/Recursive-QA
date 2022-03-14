@@ -30,31 +30,32 @@ class RQAParser:
     @staticmethod
     def get_answers(question, segment, template):
         answers = []
-        print(template, 'SSSS')
-        phrases = RQAParser.get_phrases(segment)
+        answer_segment = segment.replace(question.strip(), "")
+        phrases = RQAParser.get_phrases(segment, recursive=True)
         if template == 0 or template == 2:
             if 'NP' in phrases.keys():
                 for np in phrases['NP']:
-                    answers.append(f'{np}')
+                    if str(np) in answer_segment:
+                        answers.append(f'{np}')
         elif template == 1:
             if 'NP' in phrases.keys():
                 for np in phrases['NP']:
-                    if 'VP' in phrases.keys():
+                    if str(np) in answer_segment and 'VP' in phrases.keys():
                         for vp in phrases['VP']:
                             answers.append(f'{np} {vp}')
         print("answers before filter: ", answers, question)
-        answers = RQAParser.filter_edit_distance(
-            RQAParser.filter_not_in_question(answers, question))  # TODO make sure filtering doesnt hurt more than helps
+        answers = RQAParser.filter_edit_distance(answers)
+            # RQAParser.filter_not_in_question(answers, question))  # TODO make sure filtering doesnt hurt more than helps
         print("answers before filter: ", answers)
         return {'answers': answers}
 
     @staticmethod
     def get_questions(segment):
-        phrases = RQAParser.get_phrases(segment)
+        phrases = RQAParser.get_phrases(segment, recursive=True)
         if 'SBAR' in phrases.keys():
-            return {'question': list(map(str, phrases["SBAR"]))}
+            return {'questions': list(map(str, phrases["SBAR"]))}
         elif 'VP' in phrases.keys():
-            return {'question': list(map(str, phrases["VP"]))}
+            return {'questions': list(map(str, phrases["VP"]))}
 
     @staticmethod
     def get_segments(sentence, template=0):
