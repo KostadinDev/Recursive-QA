@@ -21,18 +21,12 @@ const elevation = 6;
 
 export default function QACard(props) {
     const sentence = props.sentence;
-    const segment = props.segment
+    const searchWords = props.tree.current ? props.tree.current.text : "";
     return <div className='qabutton top-sentence'>
-        {/*<Box*/}
-        {/*    sx={{*/}
-        {/*        p:4,*/}
-        {/*        width: '100%',*/}
-        {/*        border: '1px solid grey', borderRadius: '5px', borderColor:'#5090D3'*/}
-        {/*    }}>*/}
-        <br/>
+
         <Highlighter
             highlightClassName="highlight"
-            searchWords={[segment]}
+            searchWords={[searchWords]}
             autoEscape={true}
             textToHighlight={sentence}/>
         <div

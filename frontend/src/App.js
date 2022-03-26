@@ -39,8 +39,6 @@ function App() {
             .catch(error => {
                 alert(error);
             });
-
-        console.log("finished fetching");
     }
     const clearData = () => {
         setRecords([]);
@@ -50,7 +48,7 @@ function App() {
         if (user && !records.length) {
             fetchRecords(user)
         }
-    }, [records, scheduled]);
+    }, [records]);
     return (
         <div className="App">
             <Navigation instructions={instructions} setInstructions={setInstructions} user={user} setUser={setUser}

@@ -14,14 +14,15 @@ import RemoveButton from "./RemoveButton";
 import SkipButton from "./SkipButton";
 
 class Segment {
-    constructor(text, startingIndex, parent) {
+    constructor(text, template, startingIndex, parent) {
         this.text = text;
         this.type = null;
         this.children = [];
-        this.childrenRelations = [];
+        this.relation = null;
         this.startingIndex = startingIndex;
         this.endingIndex = startingIndex + text.length;
         this.parent = parent;
+        this.template = template;
     }
 }
 
@@ -33,14 +34,29 @@ class Relation {
     }
 }
 
-class TreeIterator {
+class Tree {
     constructor(root) {
         this.root = root;
-        this.current = root;
         this.ordering = [root];
     }
 
-    get next() {
+    get current() {
+        return this.ordering.length ? this.ordering[0] : null;
+    }
+
+    get annotation() {
+        let traverseTree = (node) => {
+            if (node.children.length == 0) {
+                ;
+            }
+
+        }
+
+
+    }
+
+
+    pop() {
         return this.ordering.shift();
     }
 
@@ -51,55 +67,19 @@ class TreeIterator {
 
 
 function QAContainer(props) {
-    const [currentRecord, setCurrentRecord] = useState(props.scheduled ? props.scheduled[0] : null);
-    const [segments, setSegments] = useState([]);
+    const [answers, setAnswers] = useState([]);
     const [questions, setQuestions] = useState([]);
     const [tree, setTree] = useState();
+    let workingTree;
 
-
-    const [sentence, setSentence] = useState("");
-    // const [segments, setSegments] = useState([]);
-    // const [questions, setQuestions] = useState([]);
-    const [answers, setAnswers] = useState([]);
     const [selectedQuestion, setSelectedQuestion] = useState("");
     const [selectedAnswer, setSelectedAnswer] = useState("");
     const [annotation, setAnnotation] = useState([]);
-
-    let history = props.history;
-    let setHistory = props.setHistory;
-    const instructions = props.instructions;
-
-    const [_, forceUpdate] = useReducer((x) => x + 1, 0);
-
-    const currentSegment = segments !== undefined && segments.length > 0 ? segments[0]['segment'] : "";
     const api = "http://localhost:5050";
 
-    const mount = async () => {
-        let currentSentence = '';
-        let currentSegments = [];
-        let currentQuestions = [];
-        await fetch(`${api}/sentence`).then(res => res.json()).then((result) => {
-            currentSentence = result['sentence'];
-        }, (error) => {
-            //TODO handle in case of sentence retrieval error
-        });
-        await fetch(`${api}/segments?sentence=${currentSentence}`).then(res => res.json()).then((result) => {
-            currentSegments = result;
-        }, (error) => {
-            //TODO handle in case of segment retrieval error
-        });
-        await fetch(`${api}/questions?segment=${currentSegments[0]['segment']}`).then(res => res.json())
-            .then((result) => {
-                currentQuestions = result['question'];
-            }, (error) => {
-                //TODO handle in case of segment retrieval error
-            });
-        setSentence(currentSentence);
-        setSegments(currentSegments);
-        setQuestions(currentQuestions);
-    };
-
     const submitRecord = async () => {
+
+        // console.log(tree);
 
         if (props.scheduled && props.scheduled[0]) {
             const d = new Date();
@@ -110,14 +90,12 @@ function QAContainer(props) {
                     history: props.history,
                     // rapid: props.mode,
                     record: props.scheduled[0].id,
-                    date: d.getTime()
+                    date: d.getTime(),
                 })
             };
             await fetch('http://localhost:5050/submit', options)
                 .then(async response => {
-                    console.log(response.ok)
                     if (!response.ok) {
-                        // const error = (data && data.message) || response.status;
                         return Promise.reject(response.status);
                     }
                 }).catch(error => {
@@ -130,7 +108,6 @@ function QAContainer(props) {
                 await onMount();
             }
         }
-
     }
     const removeRecord = async () => {
         if (props.scheduled && props.scheduled[0]) {
@@ -141,9 +118,7 @@ function QAContainer(props) {
             };
             await fetch('http://localhost:5050/remove', options)
                 .then(async response => {
-                    console.log(response.ok)
                     if (!response.ok) {
-                        // const error = (data && data.message) || response.status;
                         return Promise.reject(response.status);
                     }
                 }).catch(error => {
@@ -167,9 +142,7 @@ function QAContainer(props) {
             };
             await fetch('http://localhost:5050/skip', options)
                 .then(async response => {
-                    console.log(response.ok)
                     if (!response.ok) {
-                        // const error = (data && data.message) || response.status;
                         return Promise.reject(response.status);
                     }
                 }).catch(error => {
@@ -192,49 +165,55 @@ function QAContainer(props) {
         }).then((newSegments) =>
             fetch(`${api}/segments?sentence=${answer}`).then(res => res.json()).then((result) => {
                 newSegments = newSegments.concat(result);
-                let segmentsCopy = segments;
-                segmentsCopy.shift();
-                newSegments = newSegments.concat(segmentsCopy);
-                setSegments(newSegments);
-                return newSegments;
+                workingTree = tree
+                newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, 0, workingTree.current))
+                workingTree.current.children = newSegments
+                workingTree.current.relation = new Relation(newSegments[0], newSegments[1], null);
+                workingTree.pop()
+                workingTree.insert(newSegments)
+                setTree(workingTree);
+                return workingTree;
             }, (error) => {
-                //TODO handle in case of segment retrieval error
+                alert(error);
             })
-        ).then((newSegments) => {
-            setHistory([{'question': question, 'answer': answer, 'segment': currentSegment}].concat(history))
+        ).then((workingTree) => {
+            props.setHistory([{
+                'question': question,
+                'answer': answer,
+                'segment': workingTree.current.parent.text
+            }].concat(props.history))
             setQuestions([]);
             setAnswers([]);
-            return newSegments
-        }).then((newSegments) => {
-            updateQuestions(newSegments);
-            console.log("we get here??", newSegments.length);
-            if (newSegments.length == 0) {
-                console.log("we dont get here mate?");
-                submitRecord()
-            }
+            setAnswers([]);
+            return workingTree
+        }).then((workingTree) => {
+            updateQuestions(workingTree.current);
         });
     };
 
-    function updateQuestions(newSegments) {
-        if (newSegments.length) {
-            fetch(`${api}/questions?segment=${newSegments[0]['segment']}`).then(res => res.json()).then((result) => {
+    function updateQuestions(segment) {
+        if (segment) {
+            fetch(`${api}/questions?segment=${segment['text']}`).then(res => res.json()).then((result) => {
                 if (result) {
                     setQuestions(result['questions']);
                 }
             }, (error) => {
-                //TODO handle in case of segment retrieval error
+                alert(error)
             });
         }
     }
 
     function handleSelectQuestion(chosenQuestion) {
         setSelectedQuestion(chosenQuestion);
-        fetch(`${api}/answers?segment=${segments[0]['segment']}&question=${chosenQuestion}
-        &template=${segments[0]['template']}`).then(res => res.json()).then((result) => {
-            setAnswers(result['answers']);
-        }, (error) => {
-            //TODO handle in case of answer retrieval error
-        })
+        if (tree && tree.current) {
+            fetch(`${api}/answers?segment=${tree.current['text']}&question=${chosenQuestion}
+            &template=${tree.current['template']}`).then(res => res.json()).then((result) => {
+                setAnswers(result['answers']);
+            }, (error) => {
+                //TODO handle in case of answer retrieval error
+            })
+        }
+
     }
 
     function handleSelectAnswer(chosenAnswer) {
@@ -256,74 +235,72 @@ function QAContainer(props) {
     }
 
     function continueRecord() {
-        // console.log(props.history);
-        if (segments) {
-            let segmentsCopy = segments;
-            if (segmentsCopy.length >= 2) {
-                segmentsCopy.shift();
-                segmentsCopy.shift();
-            } else if (segmentsCopy.length >= 1) {
-                segmentsCopy.shift();
+        workingTree = tree;
+        if (workingTree) {
+            if (workingTree.ordering.length >= 2) {
+                workingTree.pop();
+                workingTree.pop();
+            } else if (workingTree.ordering.length >= 1) {
+                workingTree.pop();
             }
-            setSegments(segmentsCopy);
+            setTree(workingTree);
             setQuestions([]);
             setAnswers([]);
-            updateQuestions(segmentsCopy);
+            updateQuestions(workingTree.current);
         }
     }
 
+
     const onMount = async () => {
-
-        setQuestions([]);
-        setSegments([]);
-        setAnswers([]);
-        props.setHistory([])
         if (props.scheduled && props.scheduled[0]) {
-            console.log("mounting again")
-            let newSegments, newQuestions;
-            await fetch(`${api}/segments?sentence=${props.scheduled[0].sentence}`).then(res => res.json()).then((result) => {
-                newSegments = result;
-                console.log("new segments: ", newSegments, props.scheduled[0].sentence)
-            }, (error) => {
-                //TODO handle in case of segment retrieval error
-            });
-            await fetch(`${api}/questions?segment=${newSegments[0]['segment']}`).then(res => res.json()).then((result) => {
-                newQuestions = result['questions'];
-                console.log(result['questions'], "Q")
+            setQuestions([]);
+            setAnswers([]);
+            props.setHistory([])
+            let newSegments, newQuestions, root;
+            newSegments = await fetch(`${api}/segments?sentence=${props.scheduled[0].sentence}`)
+                .then(res => res.json())
+                .then((result) => {
+                    return result;
+                }, (error) => {
+                    alert(error);
+                });
+            root = new Segment(props.scheduled[0].sentence, 0, 0, null);
+            workingTree = new Tree(root);
 
-            }, (error) => {
-                //TODO handle in case of segment retrieval error
-            });
+            newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, 0, workingTree.current))
 
-            setSegments(newSegments);
-            setQuestions(newQuestions);
-
+            workingTree.current.children = newSegments;
+            if (newSegments.length == 2) {
+                workingTree.current.relation = new Relation(newSegments[0], newSegments[1], "if_else")
+            }
+            workingTree.pop();
+            workingTree.insert(newSegments)
+            await setTree(workingTree);
+            updateQuestions(workingTree.current);
         }
     }
     useEffect(() => {
-        //mount();
         onMount().catch();
-
     }, []);
 
 
     return (<div className="outside-qacontainer">
             <div className='qasentence'>
                 {
-                    props.scheduled && props.scheduled[0] ?
+                    props.scheduled && props.scheduled[0] && tree ?
 
                         <QACard scheduled={props.scheduled} sentence={props.scheduled[0]['sentence']}
-                                segment={currentSegment}/> : ""
+                                tree={tree}/> : ""
                 }
             </div>
             <hr/>
             <div className='qacontainer'>
-                <Instructions turnedOn={instructions} type='questions'/>
+                <Instructions turnedOn={props.instructions} type='questions'/>
                 <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}
                          handleSelect={handleSelectQuestion} type={"Questions"}/>
                 <QAItems items={answers} setItems={setAnswers} selectedItem={selectedAnswer}
                          handleSelect={handleSelectAnswer} type={"Answers"}/>
-                <Instructions turnedOn={instructions} type='answers'/>
+                <Instructions turnedOn={props.instructions} type='answers'/>
             </div>
             <div className={"qa-button-container"}>
                 <div className='qa-buttons'>

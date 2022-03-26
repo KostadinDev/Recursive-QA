@@ -199,15 +199,15 @@ export default function Data(props) {
     return (
         <div style={{width: '80%', height: '450px'}}>
             <div style={{height: "250px", display: "flex", "flex-direction": "row"}}>
-                <AnnotationView/>
+                {/*<AnnotationView/>*/}
             </div>
             <div style={{height: '100%', display: 'flex'}}>
                 <div style={{flexGrow: 1}}>
-                    <button onClick={() => {
-                        console.log(props.scheduled);
-                        console.log(props.records);
-                    }}> button
-                    </button>
+                    {/*<button onClick={() => {*/}
+                    {/*    console.log(props.scheduled);*/}
+                    {/*    console.log(props.records);*/}
+                    {/*}}> button*/}
+                    {/*</button>*/}
                     <StyledDataGrid rows={rows}
                                     columns={columns}
                                     sx={{color: "white"}}
@@ -225,13 +225,14 @@ export default function Data(props) {
                     />
                 </div>
             </div>
+            <br/>
             <div className={"data-buttons"}>
                 <ImportButton records={props.records} setRecords={props.setRecords} user={props.user}
                               selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}
                               selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
-                <ViewButton records={props.records} setRecords={props.setRecords} user={props.user}
-                            selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                {/*<ViewButton records={props.records} setRecords={props.setRecords} user={props.user}*/}
+                {/*            selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>*/}
                 <ScheduleButton records={props.records} setRecords={props.setRecords} user={props.user}
                                 selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <RemoveButton records={props.records} setRecords={props.setRecords} user={props.user}
