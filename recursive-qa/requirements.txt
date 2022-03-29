@@ -5,77 +5,43 @@ async-timeout==4.0.2
 attrs==21.4.0
 benepar==0.2.0
 blis==0.7.5
-boto3 @ file:///opt/conda/conda-bld/boto3_1643638230110/work
-botocore @ file:///opt/conda/conda-bld/botocore_1642672735464/work
 brotlipy==0.7.0
 catalogue==2.0.6
 certifi==2021.10.8
-cffi @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/croot-2p6q7e2r/cffi_1642701115063/work
 charset-normalizer==2.0.11
 click==8.0.3
-cryptography @ file:///opt/concourse/worker/volumes/live/a9ca20dd-e1fe-4ed3-754e-0db64082a5d2/volume/cryptography_1639414576087/work
 cymem==2.0.6
 Distance==0.1.3
 dnspython==2.2.1
-en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.2.0/en_core_web_sm-3.2.0-py3-none-any.whl
 filelock==3.4.2
-Flask @ file:///tmp/build/80754af9/flask_1634118196080/work
-Flask-Cors @ file:///tmp/build/80754af9/flask_cors_1614875208036/work
 Flask-RESTful==0.3.9
 frozenlist==1.3.0
 gunicorn==20.1.0
 huggingface-hub==0.4.0
-idna @ file:///tmp/build/80754af9/idna_1637925883363/work
-itsdangerous @ file:///tmp/build/80754af9/itsdangerous_1621432558163/work
-Jinja2 @ file:///tmp/build/80754af9/jinja2_1635780242639/work
-jmespath @ file:///Users/ktietz/demo/mc3/conda-bld/jmespath_1630583964805/work
-joblib @ file:///tmp/build/80754af9/joblib_1635411271373/work
 langcodes==3.3.0
-MarkupSafe @ file:///opt/concourse/worker/volumes/live/1bcf0940-5bf8-4171-61e3-2133f5885e8b/volume/markupsafe_1621528148241/work
-mkl-fft==1.3.1
-mkl-random @ file:///opt/concourse/worker/volumes/live/0cda23d8-7460-44b2-7e5d-3c76a8a0ca7e/volume/mkl_random_1626186083266/work
-mkl-service==2.4.0
 multidict==6.0.2
 murmurhash==1.0.6
 nltk==3.6.7
-numpy @ file:///opt/concourse/worker/volumes/live/21fb9bb9-9731-4901-4403-2bc27cc2cc33/volume/numpy_and_numpy_base_1634106739792/work
 packaging==21.3
 pathy==0.6.1
 preshed==3.0.6
 protobuf==3.19.4
-pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
 pydantic==1.8.2
 pymango==0.1.1
 pymongo==4.0.2
-pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1635333100036/work
 pyparsing==3.0.7
-PySocks @ file:///opt/concourse/worker/volumes/live/112288ac-9cb0-4e73-768b-13baf4ca6419/volume/pysocks_1605305820043/work
-python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
 pytz==2021.3
 PyYAML==6.0
-regex @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/croot-325xby49/regex_1642021452041/work
-requests @ file:///opt/conda/conda-bld/requests_1641824580448/work
-s3transfer @ file:///tmp/build/80754af9/s3transfer_1626435152308/work
-sacremoses @ file:///tmp/build/80754af9/sacremoses_1633107328213/work
-scikit-learn @ file:///opt/concourse/worker/volumes/live/cffa5efe-beec-4a37-5774-350794e43990/volume/scikit-learn_1642617139916/work
-scipy @ file:///opt/concourse/worker/volumes/live/9284487f-601d-4bc3-5556-535c4949d341/volume/scipy_1641557769615/work
 sentencepiece==0.1.96
-six @ file:///tmp/build/80754af9/six_1623709665295/work
 smart-open==5.2.1
 spacy==3.2.1
 spacy-legacy==3.0.8
 spacy-loggers==1.0.1
 srsly==2.4.2
 thinc==8.0.13
-threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
 tokenizers==0.11.4
-torch==1.10.2
-torch-struct==0.5
-tqdm @ file:///tmp/build/80754af9/tqdm_1635330843403/work
 transformers==4.16.2
 typer==0.4.0
 typing_extensions==4.0.1
-urllib3 @ file:///opt/conda/conda-bld/urllib3_1643638302206/work
 wasabi==0.9.0
-Werkzeug @ file:///tmp/build/80754af9/werkzeug_1635505089296/work
 yarl==1.7.2

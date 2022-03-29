@@ -186,3 +186,6 @@ xxhash==2.0.2
 yarl==1.7.2
 yaspin==2.1.0
 zc.lockfile==2.0
+
+flask~=2.0.2
+graphviz~=2.40.1

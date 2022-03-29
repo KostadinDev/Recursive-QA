@@ -43,19 +43,29 @@ class Tree {
     get current() {
         return this.ordering.length ? this.ordering[0] : null;
     }
-
     get annotation() {
-        let traverseTree = (node) => {
-            if (node.children.length == 0) {
-                ;
+        let serializeNode = (node, serializedChildren) => {
+            return {
+                "text" : node.text,
+                "type" : node.type,
+                "children" : serializedChildren,
+                "relation" : node.relation?node.relation.type:null,
+                "startingIndex" : node.startingIndex,
+                "endingIndex" : node.endingIndex,
+                "template" : node.template,
             }
-
         }
-
-
+        let traverseTree = (node) => {
+            let children = [];
+            if (node.children) {
+                for (let i = 0; i < node.children.length; i++) {
+                    children.push(traverseTree(node.children[i]));
+                }
+            }
+            return serializeNode(node, children);
+        }
+        return traverseTree(this.root); //JSON.stringify(traverseTree(this.root));
     }
-
-
     pop() {
         return this.ordering.shift();
     }
@@ -89,6 +99,7 @@ function QAContainer(props) {
                 body: JSON.stringify({
                     history: props.history,
                     // rapid: props.mode,
+                    annotation: tree.annotation,
                     record: props.scheduled[0].id,
                     date: d.getTime(),
                 })
@@ -294,6 +305,10 @@ function QAContainer(props) {
                 }
             </div>
             <hr/>
+            <button onClick={() => {
+                console.log(tree.annotation);
+            }}> Button
+            </button>
             <div className='qacontainer'>
                 <Instructions turnedOn={props.instructions} type='questions'/>
                 <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}

@@ -27,6 +27,7 @@ import ExportButton from "./ExportButton";
 import ViewButton from "./ViewButton";
 import AnnotationView from "./AnnotationView";
 import {SkipNext} from "@mui/icons-material";
+import TreeGraph from "./TreeGraph";
 
 const StyledDataGrid = styled(DataGrid)(({theme}) => ({
     border: 0,
@@ -198,6 +199,8 @@ export default function Data(props) {
     const [pageSize, setPageSize] = React.useState(25);
     return (
         <div style={{width: '80%', height: '450px'}}>
+            HELLO
+            {/*/<TreeGraph/>*/}
             <div style={{height: "250px", display: "flex", "flex-direction": "row"}}>
                 {/*<AnnotationView/>*/}
             </div>
