@@ -1,5 +1,5 @@
-import benepar, spacy
-from transformers import pipeline
+import benepar
+# from transformers import pipeline
 from .relation_types import Relation
 from .span_types import Span
 import numpy as np
@@ -12,7 +12,6 @@ from .rqa_templates import Template
 from sklearn.cluster import AffinityPropagation, KMeans
 import distance
 import spacy
-from spacy import displacy
 
 nlp = spacy.load('en_core_web_sm')
 nlp.add_pipe('benepar', config={'model': 'benepar_en3'})
@@ -215,9 +214,10 @@ class RQAParser:
                 index = -1
             return answers[index]
         else:
-            ans = pipeline("question-answering")
-            ans = ans(question=question, context=context)
-            return ans['answer']
+            # ans = pipeline("question-answering")
+            # ans = ans(question=question, context=context)
+            # return ans['answer']
+            return None
         # return ans['answer'], answers
 
     @staticmethod

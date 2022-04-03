@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "proxy": "https://limitless-reaches-93735.herokuapp.com/",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.8.2",

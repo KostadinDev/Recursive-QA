@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory, request, Response
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS  # comment this on deployment
-# from spec_rqa.rqa_parser import RQAParser
+from spec_rqa.rqa_parser import RQAParser
 from pymongo import MongoClient
 from helpers import serialize_records
 import json
@@ -10,11 +10,10 @@ from bson.objectid import ObjectId
 
 # cluster = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false" # local
 cluster ="mongodb+srv://kostadindev:k8k9gVsmdtAzpdLp@cluster0.p3nsf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority" #cloud
-
 client = MongoClient(cluster)
 db = client.RecursiveQA
 
-app = Flask(__name__, static_url_path='', static_folder='frontend/build',)
+app = Flask(__name__, static_url_path='', static_folder='frontend/build')
 CORS(app)
 api = Api(app)
 
@@ -61,13 +60,15 @@ def serve(path):
 #     return json.dumps(answers)
 #
 #
-# @app.route("/login", methods=['POST'])
-# @cross_origin()
-# def login():
-#     user = json.loads(request.get_json(force=True))
-#     if not db.users.find_one({'email': user['email']}):
-#         db.users.insert_one(user)
-#     return Response(status=200)
+@app.route("/login", methods=['POST'])
+@cross_origin()
+def login():
+    user = json.loads(request.get_json(force=True))
+    print(user)
+    print(db)
+    if not db.users.find_one({'email': user['email']}):
+        db.users.insert_one(user)
+    return Response(status=200)
 #
 #
 # @app.route("/upload", methods=['POST'])
@@ -83,15 +84,15 @@ def serve(path):
 #     return Response(status=200)
 #
 #
-# @app.route("/records", methods=['POST'])
-# @cross_origin()
-# def get_records():
-#     user_requester = request.get_json(force=True)['user']
-#     db_user = db.users.find_one({'email': user_requester['email']})
-#     if user_requester['googleId'] != db_user['googleId']:
-#         return Response(status=404)
-#     records = serialize_records(db.records.find({'user': user_requester['email']}))
-#     return Response(response=records, status=200, content_type='application/json')
+@app.route("/records", methods=['POST'])
+@cross_origin()
+def get_records():
+    user_requester = request.get_json(force=True)['user']
+    db_user = db.users.find_one({'email': user_requester['email']})
+    if user_requester['googleId'] != db_user['googleId']:
+        return Response(status=404)
+    records = serialize_records(db.records.find({'user': user_requester['email']}))
+    return Response(response=records, status=200, content_type='application/json')
 #
 #
 # @app.route("/schedule", methods=['POST'])
@@ -171,4 +172,4 @@ def serve(path):
 
 
 if __name__ == '__main__':
-    app.run(host="localhost", port=5050, debug=True)
+    app.run()

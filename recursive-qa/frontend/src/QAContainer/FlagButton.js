@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Flag from '@mui/icons-material/Flag';
 import Button from '@mui/material/Button';
-import {useState} from "react";
+import api from "../constants"
 
 export default function FlagButton(props) {
     const handleFlag = async () => {
@@ -11,18 +11,15 @@ export default function FlagButton(props) {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({records: [props.scheduled[0].id]})
             };
-            await fetch('http://localhost:5050/flag', options)
+            await fetch(api + "flag", options)
                 .then(async response => {
-                    console.log(response.ok)
                     if (!response.ok) {
-                        // const error = (data && data.message) || response.status;
                         return Promise.reject(response.status);
                     }
                 }).catch(error => {
-                    alert("here?");
+                    console.log(error);
                 });
             if (props.user) {
-                console.log("are we here Mate?")
                 props.fetchRecords(props.user);
             }
         }

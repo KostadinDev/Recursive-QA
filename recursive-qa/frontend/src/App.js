@@ -4,6 +4,7 @@ import QAContainer from "./QAContainer/QAContainer";
 import History from "./History/History";
 import React, {useState, useEffect} from 'react';
 import Data from "./DataTab/Data";
+import api from './constants';
 
 function App() {
     const [instructions, setInstructions] = useState(true);
@@ -22,7 +23,7 @@ function App() {
             cors: 'no-cors',
             body: JSON.stringify({user: userData})
         };
-        await fetch('http://localhost:5050/records', requestOptions)
+        await fetch(api + "records", requestOptions)
             .then(async response => {
                 const isJson = response.headers.get('content-type')?.includes('application/json');
                 const data = isJson && await response.json();
@@ -31,13 +32,12 @@ function App() {
                     return Promise.reject(error);
                 }
                 if (records != data.records) {
-                    console.log("updating records")
                     await setRecords(data.records);
                     await setScheduled(data.records.filter((record) => "scheduled" in record && record['scheduled'] === true));
                 }
             })
             .catch(error => {
-                alert(error);
+                console.log(error);
             });
     }
     const clearData = () => {

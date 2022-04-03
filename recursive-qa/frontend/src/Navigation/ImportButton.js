@@ -2,6 +2,7 @@ import * as React from 'react';
 import PublishIcon from '@mui/icons-material/Publish';
 import Button from '@mui/material/Button';
 import {useState} from "react";
+import api from "../constants";
 
 export default function ImportButton(props) {
     const [file, setFile] = useState()
@@ -33,22 +34,17 @@ export default function ImportButton(props) {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({user: props.user, sentences: sentences})
             };
-            await fetch('http://localhost:5050/upload', requestOptions)
+            await fetch(api + "upload", requestOptions)
                 .then(async response => {
                     const isJson = response.headers.get('content-type')?.includes('application/json');
                     const data = isJson && await response.json();
-
-                    // check for error response
                     if (!response.ok) {
-                        // get error message from body or default to response status
                         const error = (data && data.message) || response.status;
                         return Promise.reject(error);
                     }
-
-                    console.log("received data: ", data);
                 })
                 .catch(error => {
-                    console.error('There was an error!', error);
+                    console.error('error: ', error);
                 });
             props.fetchRecords(props.user);
         } else {
@@ -61,15 +57,13 @@ export default function ImportButton(props) {
         <div className="medium-opacity options-item">
             <Button
                 variant="outlined"
-                component="label"
-            >
+                component="label">
                 <PublishIcon sx={{width: 20, mr: 1}}/>
-                <div className="">Import</div>
+                <div>Import</div>
                 <input
                     type="file"
                     hidden
-                    onChange={onFileChange}
-                />
+                    onChange={onFileChange}/>
             </Button>
         </div>
     );

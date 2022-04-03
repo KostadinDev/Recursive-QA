@@ -1,5 +1,5 @@
-import {useState} from 'react';
 import GoogleLogin, {GoogleLogout} from "react-google-login";
+import api from "../constants"
 
 function Authentication(props) {
     const handleLoginFailure = (result) => {
@@ -16,7 +16,7 @@ function Authentication(props) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(user)
         };
-        await fetch('http://localhost:5050/login', loginOptions)
+        await fetch(api + 'login', loginOptions)
             .then(async response => {
                 const isJson = response.headers.get('content-type')?.includes('application/json');
                 const data = isJson && await response.json();
@@ -29,7 +29,7 @@ function Authentication(props) {
                 }
             })
             .catch(error => {
-                alert("error logging in: ", error)
+                alert(`error logging in`, error)
             });
         props.fetchRecords(JSON.parse(localStorage.getItem('user')));
     }
@@ -44,7 +44,7 @@ function Authentication(props) {
                 props.user ? (
                         <GoogleLogout
                             clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-                            buttonText={`Log Out`}
+                            buttonText={"Log Out"}
                             onLogoutSuccess={handleLogout}
                             cookiePolicy={'single_host_origin'}
                             className={"auth"}>
