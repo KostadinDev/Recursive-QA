@@ -90,9 +90,6 @@ function QAContainer(props) {
     const [annotation, setAnnotation] = useState([]);
 
     const submitRecord = async () => {
-
-        // console.log(tree);
-
         if (props.scheduled && props.scheduled[0]) {
             const d = new Date();
             const options = {
@@ -100,7 +97,6 @@ function QAContainer(props) {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     history: props.history,
-                    // rapid: props.mode,
                     annotation: tree.annotation,
                     record: props.scheduled[0].id,
                     date: d.getTime(),
@@ -171,12 +167,14 @@ function QAContainer(props) {
     }
 
     function updateSegments(question, answer) {
-        fetch(api + `segments?sentence=${question}`).then(res => res.json()).then((result) => {
+        fetch(api + 'segments?sentenceId=' + props.scheduled[0].sentenceId + "&sentence=" +
+            question + "&user=" + props.user['email']).then(res => res.json()).then((result) => {
             return result;
         }, (error) => {
             console.log(error)
         }).then((newSegments) =>
-            fetch(api + `segments?sentence=${answer}`).then(res => res.json()).then((result) => {
+            fetch(api + 'segments?sentenceId=' + props.scheduled[0].sentenceId + "&sentence=" +
+                answer + "&user=" + props.user['email']).then(res => res.json()).then((result) => {
                 newSegments = newSegments.concat(result);
                 workingTree = tree
                 newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, 0, workingTree.current))
@@ -206,7 +204,7 @@ function QAContainer(props) {
 
     function updateQuestions(segment) {
         if (segment) {
-            fetch(api + `questions?segment=${segment['text']}`).then(res => res.json()).then((result) => {
+            fetch(api + `questions?segment=${segment['text']}&user=${props.user['email']}&sentenceId=${props.scheduled[0].sentenceId}`).then(res => res.json()).then((result) => {
                 if (result) {
                     setQuestions(result['questions']);
                 }
@@ -220,7 +218,8 @@ function QAContainer(props) {
         setSelectedQuestion(chosenQuestion);
         if (tree && tree.current) {
             fetch(api + `/answers?segment=${tree.current['text']}&question=${chosenQuestion}
-            &template=${tree.current['template']}`).then(res => res.json()).then((result) => {
+            &template=${tree.current['template']}&user=${props.user['email']}&sentenceId=${props.scheduled[0].sentenceId}`)
+                .then(res => res.json()).then((result) => {
                 setAnswers(result['answers']);
             }, (error) => {
                 console.log(error);
@@ -268,12 +267,13 @@ function QAContainer(props) {
             setAnswers([]);
             props.setHistory([])
             let newSegments, newQuestions, root;
-            newSegments = await fetch(api + `segments?sentence=${props.scheduled[0].sentence}`)
+            console.log(props.scheduled[0], " OVER HERE");
+            newSegments = await fetch(api + 'segments?sentenceId=' + props.scheduled[0].sentenceId + "&sentence=" +
+                props.scheduled[0].sentence + "&user=" + props.user['email'])
                 .then(res => res.json())
                 .then((result) => {
                     return result;
                 }, (error) => {
-                    console.log(error);
                 });
             root = new Segment(props.scheduled[0].sentence, 0, 0, null);
             workingTree = new Tree(root);

@@ -29,7 +29,7 @@ function Authentication(props) {
                 }
             })
             .catch(error => {
-                alert(`error logging in`, error)
+                console(`error logging in`, error)
             });
         props.fetchRecords(JSON.parse(localStorage.getItem('user')));
     }

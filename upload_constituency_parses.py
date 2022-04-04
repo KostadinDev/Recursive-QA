@@ -31,3 +31,4 @@ if __name__ == "__main__":
                     document["constituents"][str(span)]["children"] = [str(child) for child in list(span._.children)]
         if not db.constituents.find_one({'sentence': document['sentence']}):
             db.constituents.insert_one(document)
+

@@ -1,4 +1,4 @@
-import benepar
+# import benepar
 # from transformers import pipeline
 from .relation_types import Relation
 from .span_types import Span
@@ -6,15 +6,17 @@ import numpy as np
 import uuid
 import os
 
-benepar.download('benepar_en3')
+# benepar.download('benepar_en3')
 
 from .rqa_templates import Template
 from sklearn.cluster import AffinityPropagation, KMeans
 import distance
-import spacy
 
-nlp = spacy.load('en_core_web_sm')
-nlp.add_pipe('benepar', config={'model': 'benepar_en3'})
+
+# import spacy
+
+# nlp = spacy.load('en_core_web_sm')
+# nlp.add_pipe('benepar', config={'model': 'benepar_en3'})
 
 
 def clearConsole():
@@ -26,13 +28,10 @@ def clearConsole():
 
 class RQAParser:
     @staticmethod
-    def get_answers(question, segment, template):
+    def get_answers(question, segment, template, constituents):
         answers = []
         answer_segment = segment.replace(question.strip(), "")
-        print("ANSWERS SEGMENT: ", answer_segment)
-        phrases = RQAParser.get_phrases(segment, recursive=False)
-        print("phrases: ", phrases)
-        print("template: ", template)
+        phrases = RQAParser.get_phrases(segment, constituents, recursive=False)
         if template == 0 or template == 2:
             if 'NP' in phrases.keys():
                 for np in phrases['NP']:
@@ -45,15 +44,14 @@ class RQAParser:
                         for vp in phrases['VP']:
                             if str(vp) in answer_segment:
                                 answers.append(f'{np} {vp}')
-        print("answers before filter: ", answers, question)
         answers = RQAParser.filter_edit_distance(answers)
         # RQAParser.filter_not_in_question(answers, question))  # TODO make sure filtering doesnt hurt more than helps
-        print("answers before filter: ", answers)
+        # print("answers before filter: ", answers)
         return {'answers': answers}
 
     @staticmethod
-    def get_questions(segment):
-        phrases = RQAParser.get_phrases(segment, recursive=True)
+    def get_questions(segment, constituents):
+        phrases = RQAParser.get_phrases(segment, constituents, recursive=True)
         if 'SBAR' in phrases.keys():
             return {'questions': list(map(str, phrases["SBAR"]))}
         elif 'VP' in phrases.keys():
@@ -65,29 +63,29 @@ class RQAParser:
     '''
 
     @staticmethod
-    def get_segments(sentence, template=0):
-        phrases = RQAParser.get_phrases(sentence, recursive=False)
+    def get_segments(sentence, constituents=None, template=0):
+        phrases = RQAParser.get_phrases(sentence, constituents=constituents, recursive=False)
         segments = []
         if template == 0:  # Unknown template
             if 'S' in phrases.keys():
                 if len(phrases['S']) == 1:
                     # segments.append({'segment': str(phrases['S'][0]), 'template': 0})
                     # return segments
-                    return RQAParser.get_segments(str(phrases['S'][0]), template)
+                    return RQAParser.get_segments(str(phrases['S'][0]), constituents, template)
                 elif len(phrases['S']) == 2:
                     # segments.extend([{'segment': str(phrases['S'][0]), 'template': 0},
                     #                  {'segment': str(phrases['S'][1]), 'template': 0}])
-                    segments.extend(RQAParser.get_segments(str(phrases['S'][0]), 0))
-                    segments.extend(RQAParser.get_segments(str(phrases['S'][1]), 0))
+                    segments.extend(RQAParser.get_segments(str(phrases['S'][0]), constituents, 0))
+                    segments.extend(RQAParser.get_segments(str(phrases['S'][1]), constituents, 0))
                     return segments
                 else:
                     raise Exception(">2 sentences in first constituency parse not handled")
             elif 'SBAR' in phrases.keys():
                 template = 1  # TEMPLATE IF_THEN
-                return RQAParser.get_segments(sentence, template)
+                return RQAParser.get_segments(sentence, constituents, template)
             elif 'ADVP' in phrases.keys():
                 template = 2  # TEMPLATE THEN
-                return RQAParser.get_segments(sentence, template)
+                return RQAParser.get_segments(sentence, constituents, template)
 
         segments.append({'segment': sentence, 'template': template})
         return segments
@@ -153,25 +151,49 @@ class RQAParser:
         return filtered_answers
 
     @staticmethod
-    def get_phrases(sent, recursive=False):
-        sent = list(nlp(sent).sents)[0]
-        children = list(sent._.children)
+    def get_phrases(segment, constituents=None, recursive=True):
         phrases = {}
-        for i in range(len(children)):
-            if str(children[i]) not in [',', ':', ';', '.', '!', '?']:
-                try:
-                    label = children[i]._.labels[0]
-                except:
-                    continue
-                if label not in phrases.keys():
-                    phrases[label] = []
-                phrases[label].append(children[i])
+        if constituents:
+            if segment in constituents.keys():
+                children = filter(lambda x: x in constituents, constituents[segment]['children'])
+            else:
+                children = []
+                for key in constituents.keys():
+                    if key in segment:
+                        children.extend(filter(lambda x: x in constituents, constituents[key]['children']))
+                children = set(children)
+            for child in children:
+                if constituents[child]['label'] in phrases:
+                    phrases[constituents[child]['label']].append(child)
+                else:
+                    phrases[constituents[child]['label']] = [child]
                 if recursive:
-                    new_phrases = RQAParser.get_phrases(str(children[i]), recursive=recursive)
+                    new_phrases = RQAParser.get_phrases(child, constituents=constituents, recursive=recursive)
                     for key in new_phrases.keys():
                         if key not in phrases.keys():
                             phrases[key] = []
                         phrases[key].extend(new_phrases[key])
+
+        else:
+            pass
+            # sent = list(nlp(segment).sents)[0]
+            # children = list(sent._.children)
+            # phrases = {}
+            # for i in range(len(children)):
+            #     if str(children[i]) not in [',', ':', ';', '.', '!', '?']:
+            #         try:
+            #             label = children[i]._.labels[0]
+            #         except:
+            #             continue
+            #         if label not in phrases.keys():
+            #             phrases[label] = []
+            #         phrases[label].append(children[i])
+            #         if recursive:
+            #             new_phrases = RQAParser.get_phrases(str(children[i]), recursive=recursive)
+            #             for key in new_phrases.keys():
+            #                 if key not in phrases.keys():
+            #                     phrases[key] = []
+            #                 phrases[key].extend(new_phrases[key])
         return phrases
 
     @staticmethod
@@ -201,10 +223,8 @@ class RQAParser:
                     if 'VP' in phrases.keys():
                         for vp in phrases['VP']:
                             answers.append(f'{np} {vp}')
-        print("answers before filter: ", answers)
         answers = RQAParser.filter_edit_distance(
             RQAParser.filter_not_in_question(answers, question))  # TODO make sure filtering doesnt hurt more than helps
-        print("answers after filter: ", answers)
         if human:
             return answers
         if len(answers) < 5 and answers:  # TODO CHANGE RANDOM MAGIC NUMBER
