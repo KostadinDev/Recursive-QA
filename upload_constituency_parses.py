@@ -19,7 +19,7 @@ if __name__ == "__main__":
     with open(filename, 'r') as file:
         lines = file.readlines()
 
-    for line in lines:
+    for line in lines[:5]:
         document = {"sentence": line, "constituents": {}}
         if tag:
             document['tag'] = tag

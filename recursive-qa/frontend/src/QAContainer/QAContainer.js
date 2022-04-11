@@ -267,7 +267,6 @@ function QAContainer(props) {
             setAnswers([]);
             props.setHistory([])
             let newSegments, newQuestions, root;
-            console.log(props.scheduled[0], " OVER HERE");
             newSegments = await fetch(api + 'segments?sentenceId=' + props.scheduled[0].sentenceId + "&sentence=" +
                 props.scheduled[0].sentence + "&user=" + props.user['email'])
                 .then(res => res.json())
@@ -305,11 +304,6 @@ function QAContainer(props) {
                 }
             </div>
             <hr/>
-            <button onClick={() => {
-
-
-            }}> Button
-            </button>
             <div className='qacontainer'>
                 <Instructions turnedOn={props.instructions} type='questions'/>
                 <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}

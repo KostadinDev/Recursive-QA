@@ -199,7 +199,6 @@ export default function Data(props) {
     const [pageSize, setPageSize] = React.useState(25);
     return (
         <div style={{width: '80%', height: '450px'}}>
-            HELLO
             {/*/<TreeGraph/>*/}
             <div style={{height: "250px", display: "flex", "flex-direction": "row"}}>
                 {/*<AnnotationView/>*/}

@@ -13,7 +13,6 @@ children: [
         {
         text: if
         type: if_else
-        relation: null
         },
         {
         text: the stored verifier does not match
@@ -23,12 +22,10 @@ children: [
             {
             text: does not match
             type: predicate
-            relation: null
             },
             {
             text: stored verifier
             type: var_val
-            relation: null
             }]
         }]
     },
@@ -40,12 +37,10 @@ children: [
         {
         text: NFS4ERR_EXIST
         type: const
-        relation: null
         },
         {
         text: is returned
         type: function
-        relation: null
         }]
     }]
 }
