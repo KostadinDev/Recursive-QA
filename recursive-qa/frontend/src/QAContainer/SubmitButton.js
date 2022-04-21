@@ -6,7 +6,7 @@ export default function SubmitButton(props) {
     return (
         <Box sx={{'& button': {m: 1}}}>
             <Button variant="outlined" size="large" onClick={props.submitRecord}>
-                Submit
+                Next Sentence
             </Button>
         </Box>
     );

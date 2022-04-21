@@ -13,6 +13,8 @@ import FlagButton from "./FlagButton";
 import RemoveButton from "./RemoveButton";
 import SkipButton from "./SkipButton";
 import api from "../constants";
+import BackButton from "./BackButton";
+import RestartButton from "./RestartButton";
 
 class Segment {
     constructor(text, template, startingIndex, parent) {
@@ -42,7 +44,7 @@ class Tree {
     }
 
     get current() {
-        return this.ordering.length ? this.ordering[0] : null;
+        return this.ordering ? this.ordering[0] : null;
     }
 
     get annotation() {
@@ -165,7 +167,31 @@ function QAContainer(props) {
             }
         }
     }
-
+    let handleRestart = () =>{
+        console.log("restart");
+        onMount();
+    }
+    let handleBack = () =>{
+        let history_copy = props.history;
+        history_copy.shift();
+        props.setHistory(history_copy);
+        let workingTree = tree;
+        let parent = workingTree.current.parent;
+        parent.children = []
+        parent.relation = null;
+        workingTree.ordering.shift();
+        workingTree.ordering.shift();
+        workingTree.ordering = [parent].concat(workingTree.ordering);
+        setTree(workingTree);
+        let question = props.history[0]['question'];
+        let answer = props.history[0]['answer'];
+        let segment = props.history[0]['segment'];
+        updateSegments(question, answer);
+        history_copy = props.history;
+        history_copy.shift();
+        props.setHistory(history_copy);
+        console.log(tree);
+    }
     function updateSegments(question, answer) {
         fetch(api + 'segments?sentenceId=' + props.scheduled[0].sentenceId + "&sentence=" +
             question + "&user=" + props.user['email']).then(res => res.json()).then((result) => {
@@ -315,6 +341,7 @@ function QAContainer(props) {
             <div className={"qa-button-container"}>
                 <div className='qa-buttons'>
                     <div className="qa-button-group">
+                        <BackButton handleBack={handleBack}/>
                         <NextButton handleClick={continueRecord}/>
                         <SubmitButton submitRecord={submitRecord}/>
                     </div>
@@ -322,6 +349,7 @@ function QAContainer(props) {
                         <SkipButton skipRecord={skipRecord}/>
                         <FlagButton scheduled={props.scheduled} fetchRecords={props.fetchRecords} user={props.user}/>
                         <RemoveButton removeRecord={removeRecord}/>
+                        <RestartButton handleRestart={handleRestart}/>
                     </div>
                 </div>
             </div>
