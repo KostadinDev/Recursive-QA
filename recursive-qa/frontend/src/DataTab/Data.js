@@ -81,6 +81,10 @@ function CustomToolbar() {
     );
 }
 
+function dateFormat(miliseconds){
+    let date = new Date(miliseconds)
+    return date.toString();
+}
 
 const columns: GridColDef[] = [
     {field: 'sentence', headerName: 'Sentence', width: 800},
@@ -154,9 +158,11 @@ const columns: GridColDef[] = [
             }}>{params.value ? <SkipNext color={"warning"}/> : ""}</div>
         ),
     },
-    {field: 'col3', headerName: 'Date', width: 150},
-    {field: 'col6', headerName: 'Time', width: 150},
-    {field: 'user', headerName: 'User', width: 150},
+    {field: 'date', headerName: 'Date', renderCell: (params: GridRenderCellParams<String>) => (
+          <div>{params.value?dateFormat(params.value): ""} dog</div>
+        ),width: 180},
+    // {field: 'col6', headerName: 'Time', width: 150},
+    {field: 'user', headerName: 'User', width: 180},
 ];
 
 
@@ -229,6 +235,7 @@ export default function Data(props) {
             </div>
             <br/>
             <div className={"data-buttons"}>
+                <button onClick = {() => {console.log(props.records)}}>Button</button>
                 <ImportButton records={props.records} setRecords={props.setRecords} user={props.user}
                               selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}

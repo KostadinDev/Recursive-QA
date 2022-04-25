@@ -113,6 +113,7 @@ def get_records():
     if user_requester['googleId'] != db_user['googleId']:
         return Response(status=404)
     records = serialize_records(db.records.find({'user': user_requester['email']}))
+    print(records)
     return Response(response=records, status=200, content_type='application/json')
 
 

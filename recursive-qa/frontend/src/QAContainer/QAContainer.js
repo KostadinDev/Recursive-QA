@@ -168,7 +168,6 @@ function QAContainer(props) {
         }
     }
     let handleRestart = () =>{
-        console.log("restart");
         onMount();
     }
     let handleBack = () =>{
