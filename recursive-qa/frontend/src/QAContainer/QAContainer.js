@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useReducer} from 'react';
+import React, {useEffect, useState} from 'react';
 import QAItems from "./QAItems";
 import QACard from "./QACard";
 import './qacontainer.style.css';
@@ -17,13 +17,11 @@ import BackButton from "./BackButton";
 import RestartButton from "./RestartButton";
 
 class Segment {
-    constructor(text, template, startingIndex, parent) {
+    constructor(text, template, parent) {
         this.text = text;
         this.type = null;
         this.children = [];
         this.relation = null;
-        this.startingIndex = startingIndex;
-        this.endingIndex = startingIndex + text.length;
         this.parent = parent;
         this.template = template;
     }
@@ -53,7 +51,7 @@ class Tree {
                 "text": node.text,
                 "type": node.type,
                 "children": serializedChildren,
-                "relation": node.relation ? node.relation.type : null,
+                "relation": node.relation,
                 "startingIndex": node.startingIndex,
                 "endingIndex": node.endingIndex,
                 "template": node.template,
@@ -101,6 +99,8 @@ function QAContainer(props) {
                     history: props.history,
                     annotation: tree.annotation,
                     record: props.scheduled[0].id,
+                    user: props.user['email'],
+                    sentenceId: props.scheduled[0].sentenceId,
                     date: d.getTime(),
                 })
             };
@@ -202,9 +202,11 @@ function QAContainer(props) {
                 answer + "&user=" + props.user['email']).then(res => res.json()).then((result) => {
                 newSegments = newSegments.concat(result);
                 workingTree = tree
-                newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, 0, workingTree.current))
+                newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, workingTree.current))
                 workingTree.current.children = newSegments
-                workingTree.current.relation = new Relation(newSegments[0], newSegments[1], null);
+                workingTree.current.relation = new Relation(newSegments[0].text, newSegments[1].text, null);
+                console.log(workingTree);
+                console.log(workingTree.current);
                 workingTree.pop()
                 workingTree.insert(newSegments)
                 setTree(workingTree);
@@ -299,10 +301,10 @@ function QAContainer(props) {
                     return result;
                 }, (error) => {
                 });
-            root = new Segment(props.scheduled[0].sentence, 0, 0, null);
+            root = new Segment(props.scheduled[0].sentence, 0,null);
             workingTree = new Tree(root);
 
-            newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, 0, workingTree.current))
+            newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, workingTree.current))
 
             workingTree.current.children = newSegments;
             if (newSegments.length == 2) {

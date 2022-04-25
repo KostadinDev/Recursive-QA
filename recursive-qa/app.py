@@ -3,10 +3,11 @@ from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS  # comment this on deployment
 from spec_rqa.rqa_parser import RQAParser
 from pymongo import MongoClient
-from helpers import serialize_records
+from helpers import serialize_records, build_annotation, get_sbar
 import json
 from flask_cors import CORS, cross_origin
 from bson.objectid import ObjectId
+import pprint
 
 # cluster = "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false" # local
 cluster = "mongodb+srv://kostadindev:k8k9gVsmdtAzpdLp@cluster0.p3nsf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"  # cloud
@@ -113,7 +114,6 @@ def get_records():
     if user_requester['googleId'] != db_user['googleId']:
         return Response(status=404)
     records = serialize_records(db.records.find({'user': user_requester['email']}))
-    print(records)
     return Response(response=records, status=200, content_type='application/json')
 
 
@@ -180,10 +180,14 @@ def remove():
 @cross_origin()
 def submit():
     data = request.get_json(force=True)
-    print(data["record"], "DODGS")
-    result = db.records.update_one({'_id': {'$eq': ObjectId(data['record'])}},
-                                   {"$set": {"history": data['history'], "annotation": data['annotation'],
-                                             "status": "complete", "scheduled": None, "date": data['date']}})
+    constituents = get_constituents(data['user'], data['sentenceId'])
+    sbars = get_sbar(constituents)
+    build_annotation(data['annotation'], sbars)
+    # pprint.pprint(data['annotation'])
+    # print(data['annotation'])
+    # result = db.records.update_one({'_id': {'$eq': ObjectId(data['record'])}},
+    #                                {"$set": {"history": data['history'], "annotation": data['annotation'],
+    #                                          "status": "complete", "scheduled": None, "date": data['date']}})
 
     return Response(status=200, content_type='application/json')
 

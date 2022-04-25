@@ -158,7 +158,7 @@ const columns: GridColDef[] = [
             }}>{params.value ? <SkipNext color={"warning"}/> : ""}</div>
         ),
     },
-    {field: 'date', headerName: 'Date', renderCell: (params: GridRenderCellParams<String>) => (
+    {field: 'date', headerName: 'Date', renderCefll: (params: GridRenderCellParams<String>) => (
           <div>{params.value?dateFormat(params.value): ""} dog</div>
         ),width: 180},
     // {field: 'col6', headerName: 'Time', width: 150},
