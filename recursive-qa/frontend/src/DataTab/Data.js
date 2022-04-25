@@ -154,8 +154,8 @@ const columns: GridColDef[] = [
             }}>{params.value ? <SkipNext color={"warning"}/> : ""}</div>
         ),
     },
-    {field: 'col3', headerName: 'Date', width: 150},
-    {field: 'col6', headerName: 'Time', width: 150},
+    {field: 'date', headerName: 'Date', width: 150},
+    // {field: 'col6', headerName: 'Time', width: 150},
     {field: 'user', headerName: 'User', width: 150},
 ];
 
@@ -229,6 +229,7 @@ export default function Data(props) {
             </div>
             <br/>
             <div className={"data-buttons"}>
+                <button onClick = {() => {console.log(props.records)}}>Button</button>
                 <ImportButton records={props.records} setRecords={props.setRecords} user={props.user}
                               selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}
