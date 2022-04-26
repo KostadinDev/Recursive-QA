@@ -22,7 +22,9 @@
   font-size: calc(10px + 1vmin);
   color: white;
 }
-
+.node text{
+  color:white;
+}
 /*.App-link {*/
 /*  color: #61dafb;*/
 /*}*/

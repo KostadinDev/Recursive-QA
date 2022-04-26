@@ -81,8 +81,8 @@ function CustomToolbar() {
     );
 }
 
-function dateFormat(miliseconds){
-    let date = new Date(miliseconds)
+function dateFormat(miliseconds) {
+    let date = new Date(miliseconds);
     return date.toString();
 }
 
@@ -158,9 +158,11 @@ const columns: GridColDef[] = [
             }}>{params.value ? <SkipNext color={"warning"}/> : ""}</div>
         ),
     },
-    {field: 'date', headerName: 'Date', renderCefll: (params: GridRenderCellParams<String>) => (
-          <div>{params.value?dateFormat(params.value): ""} dog</div>
-        ),width: 180},
+    {
+        field: 'date', headerName: 'Date', renderCefll: (params: GridRenderCellParams<String>) => (
+            <div>{params.value ? dateFormat(params.value) : ""}</div>
+        ), width: 180
+    },
     // {field: 'col6', headerName: 'Time', width: 150},
     {field: 'user', headerName: 'User', width: 180},
 ];
@@ -203,12 +205,42 @@ export default function Data(props) {
     const [selectionModel, setSelectionModel] = useState();
     const rows: GridRowDef = [...props.records];
     const [pageSize, setPageSize] = React.useState(25);
+    const [treeData, setTreeData] = useState(null);
+    let extractNodes = (node) => {
+        let newNode = {};
+        console.log(node);
+        if (node['children'] && node['children'].length) {
+            if (node['relation'])
+                newNode['name'] = node['relation']['type'];
+            newNode['children'] = node.children.map(extractNodes);
+        }
+        else{
+            newNode['name'] = node['text'] + ": " + node['type'];
+        }
+        return newNode;
+    }
+    let computeTreeData = () => {
+        try{
+            let annotation;
+            if (props.records) {
+                for (let i = 0; i < props.records.length; i++) {
+                    if (props.records[i].id === selectionModel[0]) {
+                        annotation = props.records[i].annotation;
+                    }
+                }
+            }
+            // console.log(annotation);
+            let treeData = extractNodes(annotation);
+            // console.log(treeData);
+            setTreeData(treeData);
+        }
+        catch (e){
+            console.log(e);
+        }
+    }
     return (
         <div style={{width: '80%', height: '450px'}}>
-            {/*/<TreeGraph/>*/}
-            <div style={{height: "250px", display: "flex", "flex-direction": "row"}}>
-                {/*<AnnotationView/>*/}
-            </div>
+            <TreeGraph treeData={treeData}/>
             <div style={{height: '100%', display: 'flex'}}>
                 <div style={{flexGrow: 1}}>
                     {/*<button onClick={() => {*/}
@@ -230,18 +262,18 @@ export default function Data(props) {
                                         setSelectionModel(newSelectionModel)
                                     }}
                                     selectionModel={selectionModel}
+                                    disableSelectionOnClick
                     />
                 </div>
             </div>
             <br/>
             <div className={"data-buttons"}>
-                <button onClick = {() => {console.log(props.records)}}>Button</button>
                 <ImportButton records={props.records} setRecords={props.setRecords} user={props.user}
                               selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}
                               selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
-                {/*<ViewButton records={props.records} setRecords={props.setRecords} user={props.user}*/}
-                {/*            selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>*/}
+                <ViewButton records={props.records} setRecords={props.setRecords} user={props.user}
+                            selectionModel={selectionModel} computeTreeData = {computeTreeData}/>
                 <ScheduleButton records={props.records} setRecords={props.setRecords} user={props.user}
                                 selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
                 <RemoveButton records={props.records} setRecords={props.setRecords} user={props.user}

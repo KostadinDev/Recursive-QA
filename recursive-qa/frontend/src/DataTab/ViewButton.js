@@ -9,6 +9,7 @@ export default function ViewButton(props) {
             <Button
                 variant="outlined"
                 component="label"
+                onClick={props.computeTreeData}
             >
                 <Launch sx={{width: 20, mr: 1}}/>
                 <div className="">View</div>

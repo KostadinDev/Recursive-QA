@@ -182,12 +182,11 @@ def submit():
     data = request.get_json(force=True)
     constituents = get_constituents(data['user'], data['sentenceId'])
     sbars = get_sbar(constituents)
-    build_annotation(data['annotation'], sbars)
-    # pprint.pprint(data['annotation'])
-    # print(data['annotation'])
-    # result = db.records.update_one({'_id': {'$eq': ObjectId(data['record'])}},
-    #                                {"$set": {"history": data['history'], "annotation": data['annotation'],
-    #                                          "status": "complete", "scheduled": None, "date": data['date']}})
+    data['annotation'] = build_annotation(data['annotation'], sbars)
+    print(data['annotation'])
+    result = db.records.update_one({'_id': {'$eq': ObjectId(data['record'])}},
+                                   {"$set": {"history": data['history'], "annotation": data['annotation'],
+                                             "status": "complete", "scheduled": None, "date": data['date']}})
 
     return Response(status=200, content_type='application/json')
 

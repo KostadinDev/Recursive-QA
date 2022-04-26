@@ -71,6 +71,4 @@ def tag_spans(node, sbars):
 def build_annotation(annotation, sbars):
     tag_spans(annotation, sbars)
     tag_sbars(annotation, sbars)
-    print(sbars)
-
-    pprint(annotation)
+    return annotation
