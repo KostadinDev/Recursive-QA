@@ -27,7 +27,7 @@ path.link {
     justify-content: center;
 }
 .mobile-tree-graph{
-    width:100%;
+    width:300px;
     overflow-x:auto;
 }
 .wrapper{

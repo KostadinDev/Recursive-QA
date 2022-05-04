@@ -240,7 +240,9 @@ export default function Data(props) {
     return (
         <div className={'wrapper'}>
             {!isMobile ? <div style={{width: '80%', height: '450px'}}>
+                <div className={'wrapper'}>
                     <TreeGraph treeData={treeData}/>
+                </div>
                     <div style={{height: '100%', display: 'flex'}}>
                         <div style={{flexGrow: 1}}>
                             {/*<button onClick={() => {*/}
