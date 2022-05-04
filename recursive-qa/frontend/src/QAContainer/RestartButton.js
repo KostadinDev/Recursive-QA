@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useState} from "react";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import {isMobile} from "react-device-detect";
 
 export default function RestartButton(props) {
 
@@ -16,7 +17,7 @@ export default function RestartButton(props) {
                 onClick={props.handleRestart}
             >
                 <RestartAltIcon sx={{width: 20, mr: 1}}/>
-                <div className="">Restart</div>
+                <div className="">{!isMobile?"Restart":""}</div>
             </Button>
         </div>
     );

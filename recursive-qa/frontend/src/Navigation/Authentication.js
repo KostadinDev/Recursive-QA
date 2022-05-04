@@ -1,5 +1,6 @@
 import GoogleLogin, {GoogleLogout} from "react-google-login";
 import api from "../constants"
+import {isMobile} from "react-device-detect";
 
 function Authentication(props) {
     const handleLoginFailure = (result) => {
@@ -39,7 +40,7 @@ function Authentication(props) {
         props.clearData();
     }
     return (
-        <div className={"options-item"}>
+        <div className={!isMobile?"options-item":""}>
             {
                 props.user ? (
                         <GoogleLogout

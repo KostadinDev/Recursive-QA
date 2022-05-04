@@ -28,6 +28,7 @@ import ViewButton from "./ViewButton";
 import AnnotationView from "./AnnotationView";
 import {SkipNext} from "@mui/icons-material";
 import TreeGraph from "./TreeGraph";
+import {isMobile} from "react-device-detect";
 
 const StyledDataGrid = styled(DataGrid)(({theme}) => ({
     border: 0,
@@ -159,7 +160,7 @@ const columns: GridColDef[] = [
         ),
     },
     {
-        field: 'date', headerName: 'Date', renderCefll: (params: GridRenderCellParams<String>) => (
+        field: 'date', headerName: 'Date', renderCell: (params: GridRenderCellParams<String>) => (
             <div>{params.value ? dateFormat(params.value) : ""}</div>
         ), width: 180
     },
@@ -213,14 +214,13 @@ export default function Data(props) {
             if (node['relation'])
                 newNode['name'] = node['relation']['type'];
             newNode['children'] = node.children.map(extractNodes);
-        }
-        else{
+        } else {
             newNode['name'] = node['text'] + ": " + node['type'];
         }
         return newNode;
     }
     let computeTreeData = () => {
-        try{
+        try {
             let annotation;
             if (props.records) {
                 for (let i = 0; i < props.records.length; i++) {
@@ -233,54 +233,99 @@ export default function Data(props) {
             let treeData = extractNodes(annotation);
             // console.log(treeData);
             setTreeData(treeData);
-        }
-        catch (e){
+        } catch (e) {
             console.log(e);
         }
     }
     return (
-        <div style={{width: '80%', height: '450px'}}>
-            <TreeGraph treeData={treeData}/>
-            <div style={{height: '100%', display: 'flex'}}>
-                <div style={{flexGrow: 1}}>
-                    {/*<button onClick={() => {*/}
-                    {/*    console.log(props.scheduled);*/}
-                    {/*    console.log(props.records);*/}
-                    {/*}}> button*/}
-                    {/*</button>*/}
-                    <StyledDataGrid rows={rows}
-                                    columns={columns}
-                                    sx={{color: "white"}}
-                                    pageSize={10}
-                                    rowsPerPageOptions={[5]}
-                                    components={{
-                                        Pagination: CustomPagination,
-                                        Toolbar: CustomToolbar,
-                                    }}
-                                    checkboxSelection
-                                    onSelectionModelChange={(newSelectionModel) => {
-                                        setSelectionModel(newSelectionModel)
-                                    }}
-                                    selectionModel={selectionModel}
-                                    disableSelectionOnClick
-                    />
+        <div style={{width:"100%"}}>
+            {!isMobile ? <div style={{width: '80%', height: '450px'}}>
+                    <TreeGraph treeData={treeData}/>
+                    <div style={{height: '100%', display: 'flex'}}>
+                        <div style={{flexGrow: 1}}>
+                            {/*<button onClick={() => {*/}
+                            {/*    console.log(props.scheduled);*/}
+                            {/*    console.log(props.records);*/}
+                            {/*}}> button*/}
+                            {/*</button>*/}
+                            <StyledDataGrid rows={rows}
+                                            columns={columns}
+                                            sx={{color: "white"}}
+                                            pageSize={10}
+                                            rowsPerPageOptions={[5]}
+                                            components={{
+                                                Pagination: CustomPagination,
+                                                Toolbar: CustomToolbar,
+                                            }}
+                                            checkboxSelection
+                                            onSelectionModelChange={(newSelectionModel) => {
+                                                setSelectionModel(newSelectionModel)
+                                            }}
+                                            selectionModel={selectionModel}
+                                            disableSelectionOnClick
+                            />
+                        </div>
+                    </div>
+                    <br/>
+                    <div className={"data-buttons"}>
+                        <ImportButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                      selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                        <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                      selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                        <ViewButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                    selectionModel={selectionModel} computeTreeData={computeTreeData}/>
+                        <ScheduleButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                        selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                        <RemoveButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                      selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                        <FlagButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                    selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                    </div>
+                </div> :
+                <div style={{height: '400px'}}>
+                    <TreeGraph treeData={treeData}/>
+                    <div style={{height: '100%', display: 'flex'}}>
+                        <div style={{flexGrow: 1}}>
+                            {/*<button onClick={() => {*/}
+                            {/*    console.log(props.scheduled);*/}
+                            {/*    console.log(props.records);*/}
+                            {/*}}> button*/}
+                            {/*</button>*/}
+                            <StyledDataGrid rows={rows}
+                                            columns={columns}
+                                            sx={{color: "white"}}
+                                            pageSize={10}
+                                            rowsPerPageOptions={[5]}
+                                            components={{
+                                                Pagination: CustomPagination,
+                                                Toolbar: CustomToolbar,
+                                            }}
+                                            checkboxSelection
+                                            onSelectionModelChange={(newSelectionModel) => {
+                                                setSelectionModel(newSelectionModel)
+                                            }}
+                                            selectionModel={selectionModel}
+                                            disableSelectionOnClick
+                            />
+                        </div>
+                    </div>
+                    <br/>
+                    <div className={!isMobile?"data-buttons":"mobile-data-buttons"}>
+                        {/*<ImportButton records={props.records} setRecords={props.setRecords} user={props.user}*/}
+                        {/*              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>*/}
+                        {/*<ExportButton records={props.records} setRecords={props.setRecords} user={props.user}*/}
+                        {/*              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>*/}
+                        <ViewButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                    selectionModel={selectionModel} computeTreeData={computeTreeData}/>
+                        <ScheduleButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                        selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                        <RemoveButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                      selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                        <FlagButton records={props.records} setRecords={props.setRecords} user={props.user}
+                                    selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
+                    </div>
                 </div>
-            </div>
-            <br/>
-            <div className={"data-buttons"}>
-                <ImportButton records={props.records} setRecords={props.setRecords} user={props.user}
-                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
-                <ExportButton records={props.records} setRecords={props.setRecords} user={props.user}
-                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
-                <ViewButton records={props.records} setRecords={props.setRecords} user={props.user}
-                            selectionModel={selectionModel} computeTreeData = {computeTreeData}/>
-                <ScheduleButton records={props.records} setRecords={props.setRecords} user={props.user}
-                                selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
-                <RemoveButton records={props.records} setRecords={props.setRecords} user={props.user}
-                              selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
-                <FlagButton records={props.records} setRecords={props.setRecords} user={props.user}
-                            selectionModel={selectionModel} fetchRecords={props.fetchRecords}/>
-            </div>
+            }
         </div>
     );
 }

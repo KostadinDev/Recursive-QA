@@ -16,6 +16,9 @@ import api from "../constants";
 import BackButton from "./BackButton";
 import RestartButton from "./RestartButton";
 
+// import { isMobile } from "react-device-detect";
+let isMobile = true;
+
 class Segment {
     constructor(text, template, parent) {
         this.text = text;
@@ -66,6 +69,7 @@ class Tree {
             }
             return serializeNode(node, children);
         }
+        console.log(traverseTree(this.root))
         return traverseTree(this.root); //JSON.stringify(traverseTree(this.root));
     }
 
@@ -167,10 +171,10 @@ function QAContainer(props) {
             }
         }
     }
-    let handleRestart = () =>{
+    let handleRestart = () => {
         onMount();
     }
-    let handleBack = () =>{
+    let handleBack = () => {
         let history_copy = props.history;
         history_copy.shift();
         props.setHistory(history_copy);
@@ -191,6 +195,7 @@ function QAContainer(props) {
         props.setHistory(history_copy);
         console.log(tree);
     }
+
     function updateSegments(question, answer) {
         fetch(api + 'segments?sentenceId=' + props.scheduled[0].sentenceId + "&sentence=" +
             question + "&user=" + props.user['email']).then(res => res.json()).then((result) => {
@@ -301,14 +306,14 @@ function QAContainer(props) {
                     return result;
                 }, (error) => {
                 });
-            root = new Segment(props.scheduled[0].sentence, 0,null);
+            root = new Segment(props.scheduled[0].sentence, 0, null);
             workingTree = new Tree(root);
 
             newSegments = newSegments.map((newSegment) => new Segment(newSegment.segment, newSegment.template, workingTree.current))
 
             workingTree.current.children = newSegments;
             if (newSegments.length == 2) {
-                workingTree.current.relation = new Relation(newSegments[0], newSegments[1], "if_else")
+                workingTree.current.relation = new Relation(newSegments[0].text, newSegments[1].text, "if_else")
             }
             workingTree.pop();
             workingTree.insert(newSegments)
@@ -321,40 +326,86 @@ function QAContainer(props) {
     }, []);
 
 
-    return (<div className="outside-qacontainer">
-            <div className='qasentence'>
-                {
-                    props.scheduled && props.scheduled[0] && tree ?
+    return (
+        <div>
+            {!isMobile ?
+                <div className="outside-qacontainer">
+                    <div className='qasentence'>
+                        {
+                            props.scheduled && props.scheduled[0] && tree ?
 
-                        <QACard scheduled={props.scheduled} sentence={props.scheduled[0]['sentence']}
-                                tree={tree}/> : ""
-                }
-            </div>
-            <hr/>
-            <div className='qacontainer'>
-                <Instructions turnedOn={props.instructions} type='questions'/>
-                <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}
-                         handleSelect={handleSelectQuestion} type={"Questions"}/>
-                <QAItems items={answers} setItems={setAnswers} selectedItem={selectedAnswer}
-                         handleSelect={handleSelectAnswer} type={"Answers"}/>
-                <Instructions turnedOn={props.instructions} type='answers'/>
-            </div>
-            <div className={"qa-button-container"}>
-                <div className='qa-buttons'>
-                    <div className="qa-button-group">
-                        <BackButton handleBack={handleBack}/>
-                        <NextButton handleClick={continueRecord}/>
-                        <SubmitButton submitRecord={submitRecord}/>
+                                <QACard scheduled={props.scheduled} sentence={props.scheduled[0]['sentence']}
+                                        tree={tree}/> : ""
+                        }
                     </div>
-                    <div className="qa-button-group">
-                        <SkipButton skipRecord={skipRecord}/>
-                        <FlagButton scheduled={props.scheduled} fetchRecords={props.fetchRecords} user={props.user}/>
-                        <RemoveButton removeRecord={removeRecord}/>
-                        <RestartButton handleRestart={handleRestart}/>
+                    <hr/>
+                    <div className='qacontainer'>
+                        <Instructions turnedOn={props.instructions} type='questions'/>
+                        <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}
+                                 handleSelect={handleSelectQuestion} type={"Questions"}/>
+                        <QAItems items={answers} setItems={setAnswers} selectedItem={selectedAnswer}
+                                 handleSelect={handleSelectAnswer} type={"Answers"}/>
+                        <Instructions turnedOn={props.instructions} type='answers'/>
+                    </div>
+                    <div className={"qa-button-container"}>
+                        <div className='qa-buttons'>
+                            <div className="qa-button-group">
+                                <button onClick={() => {
+
+                                    console.log(isMobile)
+                                }}>Button
+                                </button>
+                                {/*<BackButton handleBack={handleBack}/>*/}
+                                <NextButton handleClick={continueRecord}/>
+                                <SubmitButton submitRecord={submitRecord}/>
+                            </div>
+                            <div className="qa-button-group">
+                                <SkipButton skipRecord={skipRecord}/>
+                                <FlagButton scheduled={props.scheduled} fetchRecords={props.fetchRecords}
+                                            user={props.user}/>
+                                <RemoveButton removeRecord={removeRecord}/>
+                                <RestartButton handleRestart={handleRestart}/>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                </div>
+                :
+                <div>
+                    <div className='mobile'>
+                        {
+                            props.scheduled && props.scheduled[0] && tree ?
+
+                                <QACard scheduled={props.scheduled} sentence={props.scheduled[0]['sentence']}
+                                        tree={tree}/> : ""
+                        }
+                        <hr/>
+                        <QAItems items={questions} setItems={setQuestions} selectedItem={selectedQuestion}
+                                 handleSelect={handleSelectQuestion} type={"Questions"}/>
+                        <QAItems items={answers} setItems={setAnswers} selectedItem={selectedAnswer}
+                                 handleSelect={handleSelectAnswer} type={"Answers"}/>
+                        <div className="mobile-buttons">
+                            {/*<button onClick={() => {*/}
+
+                            {/*    console.log(isMobile)*/}
+                            {/*}}>Button*/}
+                            {/*</button>*/}
+                            {/*<BackButton handleBack={handleBack}/>*/}
+                            <NextButton handleClick={continueRecord}/>
+                            <SubmitButton submitRecord={submitRecord}/>
+                        </div>
+                        <div className="qa-button-group">
+                            <SkipButton skipRecord={skipRecord}/>
+                            <FlagButton scheduled={props.scheduled} fetchRecords={props.fetchRecords}
+                                        user={props.user}/>
+                            <RemoveButton removeRecord={removeRecord}/>
+                            <RestartButton handleRestart={handleRestart}/>
+                        </div>
+                        <hr/>
                     </div>
                 </div>
-            </div>
-            <hr/>
+            }
+
         </div>
     );
 }

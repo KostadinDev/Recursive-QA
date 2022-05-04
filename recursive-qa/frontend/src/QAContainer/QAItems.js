@@ -12,6 +12,7 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import TextField from '@mui/material/TextField';
 import {makeStyles} from "@material-ui/core/styles";
+import {isMobile} from "react-device-detect";
 
 export default function QAItems(props) {
     const items = props.items;
@@ -44,11 +45,8 @@ export default function QAItems(props) {
 
     const addItem = (event) => {
         event.preventDefault();
-        let newItemCopy = newItem.toLowerCase();
+        let newItemCopy = newItem;
         const wordsInNewItem = newItemCopy.split(' ');
-        if (wordsInNewItem[0].toLowerCase() == 'what') {
-            newItemCopy = (newItemCopy.replace('what ', ''));
-        }
         if (newItemCopy[newItemCopy.length - 1] == '?') {
             newItemCopy = (newItem.substr(0, newItem.length - 1));
         }
@@ -79,7 +77,7 @@ export default function QAItems(props) {
         color: theme.palette.getContrastText(purple[500]),
         backgroundColor: "rgba(102, 178, 255, 0.25)"
     }));
-    return <div className='qacomponent qa'>
+    return <div className={isMobile?"mobile-qacomponent":'qacomponent qa'}>
         <h3>{type}</h3>
         <Box
             sx={{

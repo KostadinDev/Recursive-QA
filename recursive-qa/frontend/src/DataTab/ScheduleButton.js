@@ -2,6 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Schedule from '@mui/icons-material/Schedule';
 import api from '../constants';
+import {isMobile} from "react-device-detect";
 
 export default function ScheduleButton(props) {
     const handleSchedule = async () => {
@@ -30,7 +31,7 @@ export default function ScheduleButton(props) {
                 onClick={handleSchedule}
                 sx={{border: "0.5px solid rgb(245, 124, 0)", "&:hover": {borderColor: "rgb(255, 167, 38)"}}}>
                 <Schedule sx={{width: 20, mr: 1, color: "rgb(245, 124, 0)"}}/>
-                <div style={{color: "rgb(245, 124, 0)"}}>Schedule</div>
+                <div style={{color: "rgb(245, 124, 0)"}}>{!isMobile?"Schedule":""}</div>
             </Button>
         </div>
     );

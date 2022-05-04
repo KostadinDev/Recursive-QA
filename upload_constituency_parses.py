@@ -19,7 +19,7 @@ if __name__ == "__main__":
     with open(filename, 'r') as file:
         lines = file.readlines()
 
-    for line in lines[:5]:
+    for line in lines:
         document = {"sentence": line, "constituents": {}}
         if tag:
             document['tag'] = tag
@@ -31,4 +31,3 @@ if __name__ == "__main__":
                     document["constituents"][str(span)]["children"] = [str(child) for child in list(span._.children)]
         if not db.constituents.find_one({'sentence': document['sentence']}):
             db.constituents.insert_one(document)
-

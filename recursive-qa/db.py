@@ -9,11 +9,3 @@ print(client.list_database_names())
 
 db = client.RecursiveQA
 print(db.list_collection_names())
-
-kosta = {"name": "Kosta"}
-ivan = {"name":"Ivan"}
-
-users = db.users
-
-result = users.insert_many([kosta, ivan])
-print(result)

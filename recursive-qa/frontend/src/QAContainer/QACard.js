@@ -6,6 +6,7 @@ import {createTheme, ThemeProvider, styled} from '@mui/material/styles';
 import Highlighter from 'react-highlight-words';
 import './qacontainer.style.css'
 import {Flag, SkipNext} from "@mui/icons-material";
+import {isMobile} from "react-device-detect";
 
 const Item = styled(Paper)(({theme}) => ({
     ...theme.typography.body2,
@@ -22,7 +23,7 @@ const elevation = 6;
 export default function QACard(props) {
     const sentence = props.sentence;
     const searchWords = props.tree.current ? props.tree.current.text : "";
-    return <div className='qabutton top-sentence'>
+    return <div className={!isMobile?'qabutton top-sentence':""}>
 
         <Highlighter
             highlightClassName="highlight"

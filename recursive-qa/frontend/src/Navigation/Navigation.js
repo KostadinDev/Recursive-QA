@@ -7,7 +7,7 @@ import Options from "./Options";
 export default function Navigation(props) {
     return (<div className={'navigation-container'}>
 
-        <Logo/>
+        {/*<Logo/>*/}
         <Options instructions={props.instructions}
                  setInstructions={props.setInstructions}
                  user={props.user}

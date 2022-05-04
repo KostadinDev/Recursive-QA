@@ -21,4 +21,9 @@ For this type of create, createattrs specifies the initial set of attributes for
 The set of attributes may include any writable attribute valid for regular files.
 When an UNCHECKED create encounters an existing file, the attributes specified by createattrs are not used, except that when a size of zero is specified, the existing file is truncated
 If GUARDED4 is specified, the server checks for the presence of a duplicate object by name before perfoming the create.
-NFS4ERR_INVAL is returned if the reclaim is done at an inappropriate time, e.g., after DELEGPURGE has been done.
+The EOF flag has value of TRUE if there are no more entries in the directory.
+If NFS4ERR_TOOSMALL is returned, the results also contain gdir_mincount.
+However, if gdia_maxcount is zero, NFS4ERR_TOOSMALL MUST NOT be returned.
+This seqid value is used for checking lock-owner sequencing/replay issues.
+In the case current file handle represents an object of type NFS4DIR, NFS4ERR_ISDIR is returned.
+If the file does not exist at the server and creation is desired, specification of method of creation is provided by the openhow parameter.

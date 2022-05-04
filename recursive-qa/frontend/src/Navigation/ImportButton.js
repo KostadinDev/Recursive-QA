@@ -3,6 +3,7 @@ import PublishIcon from '@mui/icons-material/Publish';
 import Button from '@mui/material/Button';
 import {useState} from "react";
 import api from "../constants";
+import {isMobile} from "react-device-detect";
 
 export default function ImportButton(props) {
     const [file, setFile] = useState()
@@ -59,7 +60,7 @@ export default function ImportButton(props) {
                 variant="outlined"
                 component="label">
                 <PublishIcon sx={{width: 20, mr: 1}}/>
-                <div>Import</div>
+                <div>{!isMobile?"Import":""}</div>
                 <input
                     type="file"
                     hidden

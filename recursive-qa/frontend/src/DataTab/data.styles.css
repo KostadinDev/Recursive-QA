@@ -3,14 +3,11 @@
     flex-direction: row;
 }
 
-.tree-graph{
-    color:white;
-}
 
 .node text{
     background-color:white;
     fill:white;
-    width:200px;
+    /*width:200px;*/
     font-size:11px;
 }
 
@@ -22,4 +19,14 @@
 path.link {
     fill: gray;
     stroke: gray;
+}
+.mobile-data-buttons{
+    display: flex;
+    flex-direction: row;
+    flex-wrap:wrap;
+    justify-content: center;
+}
+.mobile-tree-graph{
+    width:100%;
+    overflow-x:auto;
 }

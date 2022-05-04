@@ -3,6 +3,7 @@ import React from "react";
 import {Tree} from 'react-tree-graph';
 // import 'react-tree-graph/dist/style.css';
 import './data.styles.css';
+import {isMobile} from "react-device-detect";
 
 export default function TreeGraph(props) {
     let treeData = {
@@ -19,7 +20,7 @@ export default function TreeGraph(props) {
     }
 
     return (
-        <div className={"tree-graph"}>
+        <div className={!isMobile?"tree-graph":"mobile-tree-graph"}>
             {
                 props.treeData ? <Tree
                     data={props.treeData}

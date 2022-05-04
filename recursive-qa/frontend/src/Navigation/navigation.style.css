@@ -115,3 +115,10 @@ h1 {
 .user-badge {
     color:white;
 }
+
+.mobile-options{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding-bottom:10px;
+}

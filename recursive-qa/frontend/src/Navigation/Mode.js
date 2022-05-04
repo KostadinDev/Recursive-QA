@@ -2,6 +2,7 @@ import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import {useState} from 'react';
+import {isMobile} from "react-device-detect";
 
 function Mode(props) {
 
@@ -16,7 +17,7 @@ function Mode(props) {
     };
 
     return (
-        <div className="options-item">
+        <div className={!isMobile?"options-item":""}>
             <Stack direction="row" spacing={4}>
                 <ToggleButtonGroup
                     value={props.mode}

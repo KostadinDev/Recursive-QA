@@ -2,6 +2,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import api from '../constants'
+import {isMobile} from "react-device-detect";
 
 export default function RemoveButton(props) {
     const handleRemove = async () => {
@@ -32,7 +33,7 @@ export default function RemoveButton(props) {
                 onClick={handleRemove}
             >
                 <DeleteIcon sx={{width: 20, mr: 1}}/>
-                <div className="">Remove</div>
+                <div className="">{!isMobile?"Remove":""}</div>
             </Button>
         </div>
     );

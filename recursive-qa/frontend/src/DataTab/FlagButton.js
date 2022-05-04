@@ -3,6 +3,7 @@ import Flag from '@mui/icons-material/Flag';
 import Button from '@mui/material/Button';
 import {useState} from "react";
 import api from '../constants';
+import {isMobile} from "react-device-detect";
 
 export default function FlagButton(props) {
     const handleFlag = async () => {
@@ -34,7 +35,7 @@ export default function FlagButton(props) {
                 onClick={handleFlag}
             >
                 <Flag sx={{width: 20, mr: 1}}/>
-                <div className="">Flag</div>
+                <div className="">{!isMobile?"Flag":""}</div>
             </Button>
         </div>
     );
