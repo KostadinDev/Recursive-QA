@@ -16,8 +16,7 @@ import api from "../constants";
 import BackButton from "./BackButton";
 import RestartButton from "./RestartButton";
 
-// import { isMobile } from "react-device-detect";
-let isMobile = true;
+import { isMobile } from "react-device-detect";
 
 class Segment {
     constructor(text, template, parent) {
@@ -327,7 +326,7 @@ function QAContainer(props) {
 
 
     return (
-        <div>
+        <div className={"wrapper"}>
             {!isMobile ?
                 <div className="outside-qacontainer">
                     <div className='qasentence'>
@@ -350,11 +349,6 @@ function QAContainer(props) {
                     <div className={"qa-button-container"}>
                         <div className='qa-buttons'>
                             <div className="qa-button-group">
-                                <button onClick={() => {
-
-                                    console.log(isMobile)
-                                }}>Button
-                                </button>
                                 {/*<BackButton handleBack={handleBack}/>*/}
                                 <NextButton handleClick={continueRecord}/>
                                 <SubmitButton submitRecord={submitRecord}/>

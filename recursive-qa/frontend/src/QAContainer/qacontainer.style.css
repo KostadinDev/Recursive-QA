@@ -122,3 +122,8 @@
 .mobile-qacomponent{
     min-height: 180px;
 }
+.wrapper{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+}

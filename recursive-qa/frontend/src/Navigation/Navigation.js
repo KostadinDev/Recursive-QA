@@ -3,11 +3,11 @@ import Logo from "./Logo";
 import './navigation.style.css'
 import CompletionBar from "./CompletionBar";
 import Options from "./Options";
+import {isMobile} from "react-device-detect";
 
 export default function Navigation(props) {
     return (<div className={'navigation-container'}>
-
-        {/*<Logo/>*/}
+        {!isMobile?<Logo/>:""}
         <Options instructions={props.instructions}
                  setInstructions={props.setInstructions}
                  user={props.user}

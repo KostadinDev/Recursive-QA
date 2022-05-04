@@ -238,7 +238,7 @@ export default function Data(props) {
         }
     }
     return (
-        <div style={{width:"100%"}}>
+        <div className={'wrapper'}>
             {!isMobile ? <div style={{width: '80%', height: '450px'}}>
                     <TreeGraph treeData={treeData}/>
                     <div style={{height: '100%', display: 'flex'}}>
